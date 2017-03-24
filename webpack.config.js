@@ -1,10 +1,11 @@
 require('babel-core/register');
 const path = require('path');
 
-const src  = path.resolve(__dirname, 'src')
-const dist = path.resolve(__dirname, 'dist')
+const src  = path.resolve(__dirname, 'src');
+const dist = path.resolve(__dirname, 'dist');
 
-module.exports = function(env) {
+module.exports = (env) => {
+    if (!env.release) env.release = false;
     console.log((env.release === true) ?
                 'Build for release.' :
                 'Build for debug.\nGenerate source maps.');
@@ -13,7 +14,7 @@ module.exports = function(env) {
 
         output: {
             path: dist,
-            filename: 'bundle.js'
+            filename: 'bundle.js',
         },
 
         module: {
@@ -21,23 +22,23 @@ module.exports = function(env) {
                 {
                     test: /\.js$/,
                     exclude: /node_modules/,
-                    loader: 'babel-loader'
-                }
-            ]
+                    loader: 'babel-loader',
+                },
+            ],
         },
 
         devtool: (env.release === true) ? false : 'inline-source-map',
 
 
         resolve: {
-            extensions: ['.js']
+            extensions: ['.js'],
         },
 
         devServer: {
             contentBase: 'dist',
-            port: 3000
+            port: 3000,
         },
 
-        plugins: []
+        plugins: [],
     };
 };
