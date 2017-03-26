@@ -7,7 +7,9 @@ describe('Complex', () => {
         it('Complex test', () => {
             const a = new Complex(1, 0);
             const b = new Complex(0, 1);
-            assert.equal(a.re, b.re);
+            const ab = a.add(b);
+            assert.equal(ab.re, 1);
+            assert.equal(ab.im, 1);
         });
     });
 });
