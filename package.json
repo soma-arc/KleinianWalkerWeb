@@ -28,6 +28,6 @@
     "build": "webpack --env.release false",
     "start": "webpack-dev-server --env.release false",
     "lint": "eslint src/**/*.js",
-    "test": "webpack --config=webpack.config-test.js; mocha --require source-map-support/register tmp/test-bundle.js"
+    "test": "webpack --config=webpack.config-test.js && mocha --require source-map-support/register tmp/test-bundle.js"
   }
 }
