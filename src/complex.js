@@ -1,4 +1,5 @@
-const sqrt2 = Math.sqrt(2);
+const SQRT2 = Math.sqrt(2);
+const EPSILON = 0.000001;
 
 export default class Complex {
 
@@ -18,7 +19,7 @@ export default class Complex {
     }
 
     mult(c) {
-        return new Complex((this.re * c.re) - (this.i * c.im),
+        return new Complex((this.re * c.re) - (this.im * c.im),
                            (this.re * c.im) + (this.im * c.re));
     }
 
@@ -28,7 +29,7 @@ export default class Complex {
             return new Complex(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
         }
 
-        return new Complex((this.re * c.re + this.i * c.im) / denom,
+        return new Complex((this.re * c.re + this.im * c.im) / denom,
                            (this.im * c.re - this.re * c.im) / denom);
     }
 
@@ -48,6 +49,12 @@ export default class Complex {
         return Math.sqrt(this.re * this.re + this.im * this.im);
     }
 
+    eq(c) {
+        const re = this.re - c.re;
+        const im = this.im - c.im;
+        return (re * re + im * im) < EPSILON;
+    }
+
     static distance(c1, c2) {
         return c1.sub(c2).length();
     }
@@ -55,12 +62,12 @@ export default class Complex {
     static sqrt(c) {
         if (c.im > 0) {
             return new Complex(Math.sqrt(c.re + Math.sqrt(c.re * c.re +
-                                                          c.im * c.im)) / sqrt2,
+                                                          c.im * c.im)) / SQRT2,
                                Math.sqrt(-c.re + Math.sqrt(c.re * c.re +
-                                                           c.im * c.im)) / sqrt2);
+                                                           c.im * c.im)) / SQRT2);
         } else if (c.i < 0) {
-            return new Complex(Math.sqrt(c.re + Math.sqrt(c.re * c.re + c.im * c.im)) / sqrt2,
-                               -Math.sqrt(-c.re + Math.sqrt(c.re * c.re + c.im * c.im)) / sqrt2);
+            return new Complex(Math.sqrt(c.re + Math.sqrt(c.re * c.re + c.im * c.im)) / SQRT2,
+                               -Math.sqrt(-c.re + Math.sqrt(c.re * c.re + c.im * c.im)) / SQRT2);
         }
 
         if (c.re < 0) {
@@ -68,6 +75,16 @@ export default class Complex {
         }
 
         return new Complex(Math.sqrt(c.re), 0);
+    }
+
+    static eq(c1, c2) {
+        const re = c1.re - c2.re;
+        const im = c1.im - c2.im;
+        return (re * re + im * im) < EPSILON;
+    }
+
+    static get ZERO() {
+        return new Complex(0, 0);
     }
 
     static get ONE() {
@@ -80,5 +97,9 @@ export default class Complex {
 
     static get MINUS_ONE() {
         return new Complex(0, -1);
+    }
+
+    static get INFINITY() {
+        return new Complex(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
     }
 }
