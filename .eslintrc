@@ -1,36 +1,28 @@
 {
-    "extends": "airbnb-base",
+    "extends": ["standard"],
     "env": {
         "browser": true,
+        "es6": true,
         "node": true,
         "mocha": true,
     },
     "rules": {
-        "indent": ["error", 4],
-        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-        "no-mixed-operators": [
-            "error",
-            {
-                "groups": [
-                    ["+", "-", "%", "**"],
-                    ["&", "|", "^", "~", "<<", ">>", ">>>"],
-                    ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
-                    ["&&", "||"],
-                    ["in", "instanceof"]
-                ],
-                "allowSamePrecedence": true,
-            }
-        ],
-        "no-multi-spaces": [2, {"exceptions": {"Property": true,
-                                               "ImportDeclaration": true,
-                                               "VariableDeclarator": true,
-                                               "AssignmentExpression": true}}],
-
+        "indent": ["error", 4, { "ArrayExpression": "first",
+                                 "ObjectExpression": "first"}],
+        "semi": ["off"],
+        "comma-dangle": ["off"],
+        "space-before-function-paren": ["off"],
+        "yoda": ["off"],
+        "camelcase": ["off"]
     },
     "settings": {
         "import/resolver": {
             "webpack": {
             }
         }
-    }
+    },
+    "plugins": [
+        "json"
+    ]
+
 }
