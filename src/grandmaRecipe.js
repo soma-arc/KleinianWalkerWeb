@@ -1,10 +1,10 @@
-import Complex from './complex.js';
-import SL2C from './sl2c.js';
+import Complex from '../lib/GeometryUtils/src/complex.js';
+import SL2C from '../lib/GeometryUtils/src/sl2c.js';
 
 export default class GrandmaRecipe {
-    constructor(t_a, t_b, isT_abPlus){
+    constructor(t_a, t_b, isT_abPlus) {
         let t_ab;
-        if (isT_abPlus){
+        if (isT_abPlus) {
             t_ab = t_a.mult(t_b).add(Complex.sqrt(t_a.mult(t_a).mult(t_b.mult(t_b)).sub(t_a.mult(t_a).add(t_b.mult(t_b)).mult(new Complex(4, 0))))).mult(new Complex(0.5, 0));
         } else {
             t_ab = t_a.mult(t_b).sub(Complex.sqrt(t_a.mult(t_a).mult(t_b.mult(t_b)).sub(t_a.mult(t_a).add(t_b.mult(t_b)).mult(new Complex(4, 0))))).mult(new Complex(0.5, 0));
