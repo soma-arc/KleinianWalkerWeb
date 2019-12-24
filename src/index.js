@@ -3,11 +3,11 @@ import GrandmaRecipe from './grandmaRecipe.js';
 import DfsOperator from './dfsOperator.js';
 
 window.addEventListener('load', function(event) {
-    const recipe = new GrandmaRecipe(new Complex(2, 0.5),
-                                     new Complex(2, 0.5),
+    const recipe = new GrandmaRecipe(new Complex(1.87, 0.1),
+                                     new Complex(1.87, -0.1),
                                      false);
     const dfs = new DfsOperator(recipe.gens);
-    dfs.initialize(3, 0.005);
+    dfs.initialize(50, 0.001);
     console.log('init')
     dfs.search();
     console.log(dfs.pointList);
@@ -17,7 +17,7 @@ window.addEventListener('load', function(event) {
 
     ctx.lineWidth = 0.5;
     ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
-    const scale = 100;
+    const scale = 700;
     for (const p of dfs.pointList) {
         ctx.beginPath();
         ctx.moveTo(p[0].re * scale, p[0].im * scale);

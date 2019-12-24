@@ -18,9 +18,9 @@ export default class DfsOperator {
         this.maxLevel = maxLevel;
         this.threshold = threshold;
         this.level = 1;
-        this.tags = new Array(100);
+        this.tags = new Array(1000);
         this.tags[1] = 0;
-        this.word = new Array(100);
+        this.word = new Array(1000);
         this.word[0] = SL2C.UNIT;
         this.word[1] = this.gens[0];
         this.pointList = [];
