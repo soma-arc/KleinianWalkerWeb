@@ -46,6 +46,13 @@ module.exports = () => ({
                 test: /\.png$/,
                 exclude: /node_modules/,
                 type: 'asset/resource'
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader",
+                    "css-loader"
+                ],
             }
         ]},
 
@@ -57,7 +64,6 @@ module.exports = () => ({
 
     devServer: {
         contentBase: 'docs',
-        open: true,
         port: 8080,
     },
 
