@@ -2,7 +2,7 @@ import Vec3 from './geometry/vector3.js';
 import Vec2 from './geometry/vector2.js';
 import Point3 from './geometry/point3.js';
 import Transform from './geometry/transform.js';
-
+import Complex from './2d/complex.js';
 import { GetWebGL2Context, CreateSquareVbo, AttachShader,
          LinkProgram, CreateRGBATextures, CreateStaticVbo } from './glUtils.js';
 import Canvas from './canvas.js';
@@ -11,9 +11,9 @@ const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
 
 export default class Canvas2D extends Canvas {
-    constructor(canvasId) {
+    constructor(canvasId, scene) {
         super(canvasId);
-
+        this.scene = scene;
         this.scale = 300;
         this.distScale = 1.25;
         this.translate = new Vec2(0, 0);
@@ -26,8 +26,7 @@ export default class Canvas2D extends Canvas {
 
         this.compileRenderShader();
 
-        this.preparePoints();
-        
+        this.preparePoints(new Complex(-2, 0), new Complex(-2, 0), true, 15, 0.005);
         this.render();
     }
 
@@ -44,14 +43,8 @@ export default class Canvas2D extends Canvas {
         this.getUniformLocations();
     }
 
-    preparePoints() {
-        this.points = [];
-        for (let i = 0; i < 1000000; i++) {
-            const x = (Math.random() - 0.5) * 2;
-            const y = (Math.random() - 0.5) * 2;
-            let pos = new Vec2(x, y);
-            this.points.push(pos.x, 0, pos.y);
-        }
+    preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
+        this.points = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pointsVbo);
     }
@@ -97,7 +90,17 @@ export default class Canvas2D extends Canvas {
         this.mvpM = projectM.mult(viewM);
         this.setUniformValues();
 
-        gl.drawArrays(gl.POINTS, 0, this.points.length/3);
+        gl.drawArrays(gl.LINE_LOOP, 0, this.points.length/3);
         gl.flush();
+    }
+
+    mouseWheelListener(event) {
+        event.preventDefault();
+        if (event.deltaY > 0) {
+            this.scale /= this.distScale;
+        } else {
+            this.scale *= this.distScale;
+        }
+        this.render();
     }
 }

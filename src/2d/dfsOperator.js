@@ -2,7 +2,7 @@
 import Complex from './complex.js';
 import SL2C from './sl2c.js';
 
-export default class DfsOperator {
+export default class DFSOperator {
     /**
      * @param {[SL2C]} gens
      */
@@ -54,17 +54,18 @@ export default class DfsOperator {
 
         this.fixedPoints = [];
         for (const l of this.circularWords) {
-            const pList = []
+            const pList = [];
             for (const w of l) {
                 pList.push(w.computeFixedPointPlus());
             }
             this.fixedPoints.push(pList);
         }
-        console.log(this.gens);
-        console.log(this.fixedPoints);
+        //console.log(this.gens);
+        //console.log(this.fixedPoints);
     }
 
-    search() {
+    search(maxLevel, threshold) {
+        this.initialize(maxLevel, threshold);
         do {
             while (this.branchTermination(this.level, this.maxLevel,
                                           this.tags, this.word,
@@ -84,7 +85,7 @@ export default class DfsOperator {
     goForward(level, tags, gens, word) {
         level++;
         tags[level] = (tags[level - 1] + 1) % 4;
-        word[level] = word[level - 1].mult(gens[tags[level]])
+        word[level] = word[level - 1].mult(gens[tags[level]]);
         return level;
     }
 
@@ -120,9 +121,9 @@ export default class DfsOperator {
             (Complex.distance(p[2], p[1]) < threshold &&
              Complex.distance(p[1], p[0]) < threshold)) {
             //            Array.prototype.push.apply(pointList, p);
-            pointList.push(p[0].re, p[0].im, 0,
-                           p[1].re, p[1].im, 0,
-                           p[2].re, p[2].im, 0);
+            pointList.push(p[0].re, 0, p[0].im,
+                           p[1].re, 0, p[1].im,
+                           p[2].re, 0, p[2].im);
             return true;
         }
         return false;

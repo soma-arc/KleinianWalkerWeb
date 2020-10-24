@@ -1,10 +1,11 @@
 import Canvas2D from './canvas2d.js';
+import Scene2d from './2d/scene2d.js';
 
 export default class CanvasManager {
-    constructor(id){
+    constructor(canvasId){
         //this.scene = scene;
         this.resizeCallback = this.resize.bind(this);
-        this.canvas2d = new Canvas2D(id);
+        this.canvas2d = new Canvas2D(canvasId, new Scene2d);
 
     }
     
@@ -15,7 +16,6 @@ export default class CanvasManager {
 
     resize() {
         this.canvas2d.resizeCanvas();
-        this.canvas2d.preparePoints();
         this.canvas2d.render();
     }
 
