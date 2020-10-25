@@ -32,6 +32,10 @@ export default class Canvas2D extends Canvas {
         this.isT_abPlus = true;
         this.maxLevel = 15;
         this.threshold = 0.005;
+
+        this.backgroundColor = {
+            rgba: { r: 0, g: 0, b: 0, a: 1 },
+        };
     }
 
     init() {
@@ -88,7 +92,11 @@ export default class Canvas2D extends Canvas {
         const height = this.canvas.height;
         const gl = this.gl;
         gl.viewport(0, 0, width, height);
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        console.log(this.backgroundColor.rgba);
+        gl.clearColor(this.backgroundColor.rgba.r/255,
+                      this.backgroundColor.rgba.g/255,
+                      this.backgroundColor.rgba.b/255,
+                      this.backgroundColor.rgba.a);
         gl.clearDepth(1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.renderProgram);

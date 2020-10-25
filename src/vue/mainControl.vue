@@ -52,21 +52,35 @@
              min="0" step="0.001">
     </b-input>
   </b-field>
+  <b-field>
+    <chrome-picker v-model="colors"
+                   @input="changeBackgroundColor"></chrome-picker>
+  </b-field>
 </div>
 </template>
 
 <script>
+import {Chrome} from 'vue-color'
+
 export default {
     components: {
+        'chrome-picker': Chrome,
     },
     props: ['canvasManager'],
     data: function () {
         return {
+            colors: {
+                rgba: { r: 0, g: 0, b: 0, a: 1 },
+            }
         }
     },
     methods: {
         valueChanged: function(event) {
             this.canvasManager.canvas2d.computeGrandmaLimitSet();
+            this.canvasManager.canvas2d.render();
+        },
+        changeBackgroundColor: function(event) {
+            this.canvasManager.canvas2d.backgroundColor = this.colors;
             this.canvasManager.canvas2d.render();
         }
     }
