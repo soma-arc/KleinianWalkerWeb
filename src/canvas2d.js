@@ -17,16 +17,32 @@ export default class Canvas2D extends Canvas {
         this.scale = 300;
         this.distScale = 1.25;
         this.translate = new Vec2(0, 0);
+
+        this.mouseState = {
+            isPressing: false,
+            prevPosition: new Vec2(0, 0),
+            button: -1
+        };
+
+
+        this.t_a = new Complex(1.91, 0.05);
+        this.t_b = new Complex(1.91, 0.05);
+        //this.t_a = new Complex(-2, 0.0);
+        //this.t_b = new Complex(-2, 0.0);
+        this.isT_abPlus = true;
+        this.maxLevel = 15;
+        this.threshold = 0.005;
     }
 
     init() {
         this.canvas = document.getElementById(this.canvasId);
+        this.canvasRatio = this.canvas.width / this.canvas.height / 2;
         this.gl = GetWebGL2Context(this.canvas);
         this.addEventListeners();
 
         this.compileRenderShader();
 
-        this.preparePoints(new Complex(-2, 0), new Complex(-2, 0), true, 15, 0.005);
+        this.preparePoints(this.t_a, this.t_b, this.isT_abPlus, this.maxLevel, this.threshold);
         this.render();
     }
 
@@ -41,6 +57,10 @@ export default class Canvas2D extends Canvas {
                                                          'vPosition');
         this.gl.enableVertexAttribArray(this.vPositionAttrib);
         this.getUniformLocations();
+    }
+
+    computeGrandmaLimitSet() {
+        this.preparePoints(this.t_a, this.t_b, this.isT_abPlus, this.maxLevel, this.threshold);
     }
 
     preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
@@ -90,8 +110,21 @@ export default class Canvas2D extends Canvas {
         this.mvpM = projectM.mult(viewM);
         this.setUniformValues();
 
-        gl.drawArrays(gl.LINE_LOOP, 0, this.points.length/3);
+        gl.drawArrays(gl.LINES, 0, this.points.length/3);
         gl.flush();
+    }
+
+    /**
+     * Calculate screen coordinates from mouse position
+     * [0, 0]x[width, height]
+     * @param {number} mx
+     * @param {number} my
+     * @returns {Vec2}
+     */
+    calcCanvasCoord(mx, my) {
+        const rect = this.canvas.getBoundingClientRect();
+        return new Vec2(2. * (mx - rect.left - this.canvas.width/2) / this.scale,
+                        2. * (my - rect.top - this.canvas.height/2) / this.scale);
     }
 
     mouseWheelListener(event) {
@@ -102,5 +135,32 @@ export default class Canvas2D extends Canvas {
             this.scale *= this.distScale;
         }
         this.render();
+    }
+
+    mouseDownListener(event) {
+        event.preventDefault();
+        this.canvas.focus();
+        const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+        this.mouseState.button = event.button;
+
+        this.mouseState.prevPosition = mouse;
+        this.mouseState.prevTranslate = this.translate;
+        this.mouseState.isPressing = true;
+    }
+
+    mouseMoveListener(event) {
+        event.preventDefault();
+        if (!this.mouseState.isPressing) return;
+        const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+        if (this.mouseState.button === Canvas.MOUSE_BUTTON_RIGHT) {
+            this.translate = new Vec2(this.translate.x - (mouse.x - this.mouseState.prevPosition.x),
+                                      this.translate.y + mouse.y - this.mouseState.prevPosition.y);
+            this.render();
+        }
+    }
+    
+    mouseUpListener(event) {
+        this.mouseState.isPressing = false;
+        this.mouseState.button = -1;
     }
 }

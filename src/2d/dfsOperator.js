@@ -120,8 +120,10 @@ export default class DFSOperator {
         if (level === maxLevel ||
             (Complex.distance(p[2], p[1]) < threshold &&
              Complex.distance(p[1], p[0]) < threshold)) {
+            //console.log(maxLevel);
             //            Array.prototype.push.apply(pointList, p);
             pointList.push(p[0].re, 0, p[0].im,
+                           p[1].re, 0, p[1].im,
                            p[1].re, 0, p[1].im,
                            p[2].re, 0, p[2].im);
             return true;

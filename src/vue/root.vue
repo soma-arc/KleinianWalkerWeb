@@ -1,7 +1,7 @@
 <template>
 <div id="rootContainer">
   <header-panel/>
-  <middle-panel/>
+  <middle-panel :canvasManager="canvasManager"/>
   <footer-panel/>
 </div>
 </template>
@@ -12,7 +12,7 @@ import MiddlePanel from './middlePanel.vue';
 import FooterPanel from './footerPanel.vue';
 
 export default {
-    props: [],
+    props: ['canvasManager'],
     components: {
         HeaderPanel, MiddlePanel, FooterPanel
     },

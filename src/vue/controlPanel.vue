@@ -2,6 +2,7 @@
 <div class="controlPanel">
   <b-tabs v-model="activeTab">
     <b-tab-item label="Main">
+      <main-control :canvasManager="canvasManager"/>
     </b-tab-item>
     <b-tab-item label="Final">
     </b-tab-item>
@@ -14,10 +15,12 @@
 </template>
 
 <script>
+import MainControl from './mainControl.vue';
 export default {
     components: {
+        MainControl
     },
-    props: [],
+    props: ['canvasManager'],
     data: function () {
         return {
         }

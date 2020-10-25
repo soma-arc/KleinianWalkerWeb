@@ -5,14 +5,14 @@
         <canvas id="canvas" tabIndex="1000"></canvas>
       </div>
     </div>
-    <control-panel/>
+    <control-panel :canvasManager="canvasManager"/>
   </div>
 </template>
 
 <script>
 import ControlPanel from './controlPanel.vue';
 export default {
-  props: [],
+  props: ['canvasManager'],
   components: { ControlPanel },
 }
 </script>
