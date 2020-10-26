@@ -3,8 +3,7 @@
     <div id="left">
       <a id="ghLink" href="https://github.com/soma-arc/KleinianWalkerWeb"
          target="_blank">
-        GitHub
-          <!--<img src="../img/GitHub-Mark-32px.png" class="imgLink"/>-->
+        <img src="../img/GitHub-Mark-32px.png" class="imgLink"/>
       </a>
     </div>
     <div>
@@ -14,6 +13,8 @@
 </template>
   
 <script>
+  export default {
+  }
 </script>
 
 <style>
@@ -35,6 +36,9 @@
     cursor: default;
 }
 
+.imgLink{
+}
+  
 #left {
     height: 50px;
     display: flex;
