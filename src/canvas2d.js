@@ -92,7 +92,6 @@ export default class Canvas2D extends Canvas {
         const height = this.canvas.height;
         const gl = this.gl;
         gl.viewport(0, 0, width, height);
-        console.log(this.backgroundColor.rgba);
         gl.clearColor(this.backgroundColor.rgba.r/255,
                       this.backgroundColor.rgba.g/255,
                       this.backgroundColor.rgba.b/255,
@@ -170,5 +169,13 @@ export default class Canvas2D extends Canvas {
     mouseUpListener(event) {
         this.mouseState.isPressing = false;
         this.mouseState.button = -1;
+    }
+
+    save() {
+        this.render();
+        this.saveImage(this.gl,
+                       this.canvas.width,
+                       this.canvas.height,
+                       'limitset.png');
     }
 }

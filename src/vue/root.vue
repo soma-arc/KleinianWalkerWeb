@@ -1,6 +1,6 @@
 <template>
 <div id="rootContainer">
-  <header-panel/>
+  <header-panel :canvasManager="canvasManager"/>
   <middle-panel :canvasManager="canvasManager"/>
   <footer-panel/>
 </div>

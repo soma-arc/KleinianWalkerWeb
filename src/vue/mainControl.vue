@@ -53,6 +53,7 @@
     </b-input>
   </b-field>
   <b-field>
+    Background Color
     <chrome-picker v-model="colors"
                    @input="changeBackgroundColor"></chrome-picker>
   </b-field>

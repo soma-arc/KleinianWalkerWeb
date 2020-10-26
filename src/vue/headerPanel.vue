@@ -22,7 +22,7 @@
 
 <script>
 export default {
-    props: [],
+    props: ['canvasManager'],
     methods: {
         clear: function() {
         },
@@ -31,6 +31,7 @@ export default {
         load: function() {
         },
         saveImage: function() {
+            this.canvasManager.canvas2d.save();
         }
     }
 }
