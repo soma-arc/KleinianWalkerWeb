@@ -186,10 +186,30 @@ export default class Vec3 {
         if (Math.abs(v1.x) > Math.abs(v1.y)) {
             v2 = new Vec3(-v1.z, 0, v1.x).scale(1 / Math.sqrt(v1.x * v1.x + v1.z * v1.z));
         } else {
-            v2 = new Vec3(0, v1.z, -v1.y).scale(1 / Math.sqrt(v1.y * v1.y + v1.z * v1.z))
+            v2 = new Vec3(0, v1.z, -v1.y).scale(1 / Math.sqrt(v1.y * v1.y + v1.z * v1.z));
         }
         const v3 = Vec3.cross(v1, v2);
         return [v1, v2, v3];
+    }
+
+    static abs(v) {
+        return new Vec3(Math.abs(v.x), Math.abs(v.y), Math.abs(v.z));
+    }
+
+    static fract(v) {
+        return new Vec3(v.x - Math.floor(v.x),
+                        v.y - Math.floor(v.y),
+                        v.z - Math.floor(v.z));
+    }
+
+    static clamp(v, a, b) {
+        return new Vec3(Math.min(Math.max(v.x, a), b),
+                        Math.min(Math.max(v.y, a), b),
+                        Math.min(Math.max(v.z, a), b));
+    }
+
+    static mix(x, y, a) {
+        return x.scale(1 - a).add(y.scale(a));
     }
 
     static get THRESHOLD() {

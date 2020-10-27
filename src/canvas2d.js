@@ -36,6 +36,9 @@ export default class Canvas2D extends Canvas {
         this.backgroundColor = {
             rgba: { r: 0, g: 0, b: 0, a: 1 },
         };
+        this.limitSetColor = {
+            rgba: { r: 255, g: 0, b: 0, a: 1 },
+        };
     }
 
     init() {
@@ -60,6 +63,9 @@ export default class Canvas2D extends Canvas {
         this.vPositionAttrib = this.gl.getAttribLocation(this.renderProgram,
                                                          'vPosition');
         this.gl.enableVertexAttribArray(this.vPositionAttrib);
+        this.vColorAttrib = this.gl.getAttribLocation(this.renderProgram,
+                                                      'color');
+        this.gl.enableVertexAttribArray(this.vColorAttrib);
         this.getUniformLocations();
     }
 
@@ -68,9 +74,26 @@ export default class Canvas2D extends Canvas {
     }
 
     preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
-        this.points = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
+        [this.points, this.colors] = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pointsVbo);
+
+        this.colors = new Array(this.points.length);
+        for(let i = 0; i < this.points.length; i += 3) {
+            this.colors[i] = this.limitSetColor.rgba.r/255;
+            this.colors[i + 1] = this.limitSetColor.rgba.g/255;
+            this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+        }
+        this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
+    }
+
+    changeLimitSetColor() {
+        this.colors = new Array(this.points.length);
+        for(let i = 0; i < this.points.length; i += 3) {
+            this.colors[i] = this.limitSetColor.rgba.r/255;
+            this.colors[i + 1] = this.limitSetColor.rgba.g/255;
+            this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+        }
+        this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
     }
 
     getUniformLocations() {
@@ -102,6 +125,8 @@ export default class Canvas2D extends Canvas {
         gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pointsVbo);
         const attStride = 3;
         gl.vertexAttribPointer(this.vPositionAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorsVbo);
+        gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
 
         const viewM = Transform.lookAt(new Point3(this.translate.x,
                                                   1, this.translate.y),

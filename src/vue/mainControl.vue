@@ -57,6 +57,11 @@
     <chrome-picker v-model="colors"
                    @input="changeBackgroundColor"></chrome-picker>
   </b-field>
+  <b-field>
+    Limit Set Color
+    <chrome-picker v-model="limitSetColors"
+                   @input="changeLimitSetColor"></chrome-picker>
+  </b-field>
 </div>
 </template>
 
@@ -72,6 +77,9 @@ export default {
         return {
             colors: {
                 rgba: { r: 0, g: 0, b: 0, a: 1 },
+            },
+            limitSetColors: {
+                rgba: { r: 255, g: 0, b: 0, a: 1 },
             }
         }
     },
@@ -82,6 +90,11 @@ export default {
         },
         changeBackgroundColor: function(event) {
             this.canvasManager.canvas2d.backgroundColor = this.colors;
+            this.canvasManager.canvas2d.render();
+        },
+        changeLimitSetColor: function(event) {
+            this.canvasManager.canvas2d.limitSetColor = this.limitSetColors;
+            this.canvasManager.canvas2d.changeLimitSetColor();
             this.canvasManager.canvas2d.render();
         }
     }
