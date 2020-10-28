@@ -6,6 +6,7 @@ import Complex from './2d/complex.js';
 import { GetWebGL2Context, CreateSquareVbo, AttachShader,
          LinkProgram, CreateRGBATextures, CreateStaticVbo } from './glUtils.js';
 import Canvas from './canvas.js';
+import { Hsv2rgb } from './util.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
@@ -39,6 +40,8 @@ export default class Canvas2D extends Canvas {
         this.limitSetColor = {
             rgba: { r: 255, g: 0, b: 0, a: 1 },
         };
+
+        this.coloringMode = 'Monotone';
     }
 
     init() {
@@ -74,24 +77,57 @@ export default class Canvas2D extends Canvas {
     }
 
     preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
-        [this.points, this.colors] = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
+        [this.points, this.colors, this.firstTags] = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
-        this.colors = new Array(this.points.length);
-        for(let i = 0; i < this.points.length; i += 3) {
-            this.colors[i] = this.limitSetColor.rgba.r/255;
-            this.colors[i + 1] = this.limitSetColor.rgba.g/255;
-            this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+        if(this.coloringMode === 'Monotone') {
+            this.colors = new Array(this.points.length);
+            for(let i = 0; i < this.points.length; i += 3) {
+                this.colors[i] = this.limitSetColor.rgba.r/255;
+                this.colors[i + 1] = this.limitSetColor.rgba.g/255;
+                this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+            }
+        } else if(this.coloringMode === 'FirstGenerator') {
+            this.colors = [];
+            const c = [new Vec3(1, 0, 0),
+                       new Vec3(0, 1, 0),
+                       new Vec3(0, 0, 1),
+                       new Vec3(1, 1, 0)];
+            for(let i = 0; i < this.firstTags.length; i++) {
+                const rgb = c[this.firstTags[i]];
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+            }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
     }
 
     changeLimitSetColor() {
-        this.colors = new Array(this.points.length);
-        for(let i = 0; i < this.points.length; i += 3) {
-            this.colors[i] = this.limitSetColor.rgba.r/255;
-            this.colors[i + 1] = this.limitSetColor.rgba.g/255;
-            this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+        if(this.coloringMode === 'Monotone') {                     
+            this.colors = new Array(this.points.length);
+            for(let i = 0; i < this.points.length; i += 3) {
+                this.colors[i] = this.limitSetColor.rgba.r/255;
+                this.colors[i + 1] = this.limitSetColor.rgba.g/255;
+                this.colors[i + 2] = this.limitSetColor.rgba.b/255;
+            }
+        } else if(this.coloringMode === 'Gradation') {
+            this.colors = [];
+            for(let i = 0; i < this.points.length; i+=4) {
+                const rgb = Hsv2rgb(i * 0.00001, 1.0, 1.0);
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+            }
+        } else if(this.coloringMode === 'FirstGenerator') {
+            this.colors = [];
+            const c = [new Vec3(1, 0, 0),
+                       new Vec3(0, 1, 0),
+                       new Vec3(0, 0, 1),
+                       new Vec3(1, 1, 0)];
+            for(let i = 0; i < this.firstTags.length; i++) {
+                const rgb = c[this.firstTags[i]];
+                this.colors.push(rgb.x, rgb.y, rgb.z);
+            }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
     }

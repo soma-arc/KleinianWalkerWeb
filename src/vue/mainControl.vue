@@ -1,7 +1,34 @@
 <template>
 <div>
+  Recipe
   <b-field>
-    t_a 
+    <b-dropdown
+      :scrollable="isScrollable"
+      :max-height="maxHeight"
+      v-model="currentMenu"
+      aria-role="list"
+      >
+      <button class="button is-primary" type="button" slot="trigger">
+        <template>
+          <span>{{currentMenu.text}}</span>
+        </template>
+        <b-icon icon="menu-down"></b-icon>
+      </button>
+      
+      <b-dropdown-item 
+        v-for="(menu, index) in menus"
+        :key="index"
+        :value="menu" aria-role="listitem">
+        <div class="media">
+          <div class="media-content">
+            <h3>{{menu.text}}</h3>
+          </div>
+        </div>
+      </b-dropdown-item>
+    </b-dropdown>
+  </b-field>
+  <b-field>
+    <span class="parameterLabel">t_a</span>
     <b-input v-model.number="canvasManager.canvas2d.t_a.re"
              @input="valueChanged"
              placeholder="Number"
@@ -16,7 +43,7 @@
     </b-input>
   </b-field>
   <b-field>
-    t_b 
+    <span class="parameterLabel">t_b</span>
     <b-input v-model.number="canvasManager.canvas2d.t_b.re"
              @input="valueChanged"
              placeholder="Number"
@@ -33,8 +60,8 @@
   <b-field>
     <b-checkbox v-model="canvasManager.canvas2d.isT_abPlus"
                 @input="valueChanged">
-        isT_abPlus
-      </b-checkbox>
+      isT_abPlus
+    </b-checkbox>
   </b-field>
   <b-field>
     MaxLevel
@@ -51,16 +78,6 @@
              type="number"
              min="0" step="0.001">
     </b-input>
-  </b-field>
-  <b-field>
-    Background Color
-    <chrome-picker v-model="colors"
-                   @input="changeBackgroundColor"></chrome-picker>
-  </b-field>
-  <b-field>
-    Limit Set Color
-    <chrome-picker v-model="limitSetColors"
-                   @input="changeLimitSetColor"></chrome-picker>
   </b-field>
 </div>
 </template>
@@ -80,7 +97,11 @@ export default {
             },
             limitSetColors: {
                 rgba: { r: 255, g: 0, b: 0, a: 1 },
-            }
+            },
+            currentMenu: { text: 'GrandmaRecipe' },
+            menus: [
+                { text: 'GrandmaRecipe'},
+            ]
         }
     },
     methods: {
@@ -102,5 +123,7 @@ export default {
 </script>
 
 <style>
-
+.parameterLabel {
+    padding-top: 5px;
+}
 </style>

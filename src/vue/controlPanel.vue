@@ -4,7 +4,8 @@
     <b-tab-item label="Main">
       <main-control :canvasManager="canvasManager"/>
     </b-tab-item>
-    <b-tab-item label="Final">
+    <b-tab-item label="Coloring">
+      <coloring-control :canvasManager="canvasManager"/>
     </b-tab-item>
     <b-tab-item label="Others">
     </b-tab-item>
@@ -16,9 +17,10 @@
 
 <script>
 import MainControl from './mainControl.vue';
+import ColoringControl from './coloringControl.vue';
 export default {
     components: {
-        MainControl
+        MainControl, ColoringControl
     },
     props: ['canvasManager'],
     data: function () {

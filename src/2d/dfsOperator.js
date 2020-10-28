@@ -26,6 +26,7 @@ export default class DFSOperator {
         this.word[1] = this.gens[0];
         this.pointList = [];
         this.colorList = [];
+        this.firstTags = [];
     }
 
     /**
@@ -127,11 +128,13 @@ export default class DFSOperator {
                            p[1].re, 0, p[1].im,
                            p[1].re, 0, p[1].im,
                            p[2].re, 0, p[2].im);
-            const rgb = Hsv2rgb(pointList.length * 0.01,1.0, 1.0);
+            const rgb = Hsv2rgb(pointList.length * 0.00001,1.0, 1.0);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
+
+            this.firstTags.push(tags[1], tags[1], tags[1], tags[1]);
             return true;
         }
         return false;

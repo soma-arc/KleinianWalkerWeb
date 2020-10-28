@@ -9,6 +9,6 @@ export default class Scene2d {
         const grandmaRecipe = new GrandmaRecipe(t_a, t_b, isT_abPlus);
         const dfs = new DFSOperator(grandmaRecipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList];
+        return [dfs.pointList, dfs.colorList, dfs.firstTags];
     }
 }
