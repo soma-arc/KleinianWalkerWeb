@@ -30,12 +30,38 @@
     <chrome-picker v-model="limitSetColors"
                    @input="changeLimitSetColor"></chrome-picker>
   </b-field>
-  <b-field v-show="canvasManager.canvas2d.coloringMode === 'Gradation'">
-    Gradation
-  </b-field>
-  <b-field v-show="canvasManager.canvas2d.coloringMode === 'FirstGenerator'">
-    First Generator
-  </b-field>
+  <div v-show="canvasManager.canvas2d.coloringMode === 'Gradation'">
+    <b-field>
+      Initial Hue
+      <b-input  v-model.number="canvasManager.canvas2d.initialHue"
+                @input="changeLimitSetColor"
+                placeholder="Number"
+                type="number"
+                step="0.01"></b-input>
+    </b-field>
+    <b-field>
+      Hue Step
+      <b-input  v-model.number="canvasManager.canvas2d.hueStep"
+                @input="changeLimitSetColor"
+                placeholder="Number"
+                type="number"
+                step="0.00001"></b-input>
+    </b-field>
+  </div>
+  <div v-show="canvasManager.canvas2d.coloringMode === 'FirstGenerator'">
+    Color1
+    <chrome-picker v-model="generatorColors0"
+                   @input="changeGeneratorColor"></chrome-picker>
+    Color2
+    <chrome-picker v-model="generatorColors1"
+                   @input="changeGeneratorColor"></chrome-picker>
+    Color3
+    <chrome-picker v-model="generatorColors2"
+                   @input="changeGeneratorColor"></chrome-picker>
+    Color4
+    <chrome-picker v-model="generatorColors3"
+                   @input="changeGeneratorColor"></chrome-picker>
+  </div>
 </div>
 </template>
 
@@ -54,6 +80,18 @@ export default {
             },
             limitSetColors: {
                 rgba: { r: 255, g: 0, b: 0, a: 1 },
+            },
+            generatorColors0: {
+                rgba: { r: 255, g: 0, b: 0, a: 1 }
+            },
+            generatorColors1: {
+                rgba: { r: 0, g: 255, b: 0, a: 1 }
+            },
+            generatorColors2: {
+                rgba: { r: 0, g: 0, b: 255, a: 1 }
+            },
+            generatorColors3: {
+                rgba: { r: 255, g: 255, b: 0, a: 1 }
             }
         }
     },
@@ -64,6 +102,14 @@ export default {
         },
         changeLimitSetColor: function(event) {
             this.canvasManager.canvas2d.limitSetColor = this.limitSetColors;
+            this.canvasManager.canvas2d.changeLimitSetColor();
+            this.canvasManager.canvas2d.render();
+        },
+        changeGeneratorColor: function(event) {
+            this.canvasManager.canvas2d.generatorColors = [this.generatorColors0,
+                                                           this.generatorColors1,
+                                                           this.generatorColors2,
+                                                           this.generatorColors3];
             this.canvasManager.canvas2d.changeLimitSetColor();
             this.canvasManager.canvas2d.render();
         }

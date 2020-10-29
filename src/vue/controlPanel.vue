@@ -8,19 +8,19 @@
       <coloring-control :canvasManager="canvasManager"/>
     </b-tab-item>
     <b-tab-item label="Others">
+      <others-control :canvasManager="canvasManager"/>
     </b-tab-item>
   </b-tabs>  
-</b-tab-item>
-</b-tabs>
 </div>
 </template>
 
 <script>
 import MainControl from './mainControl.vue';
 import ColoringControl from './coloringControl.vue';
+import OthersControl from './othersControl.vue';
 export default {
     components: {
-        MainControl, ColoringControl
+        MainControl, ColoringControl, OthersControl
     },
     props: ['canvasManager'],
     data: function () {

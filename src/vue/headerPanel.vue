@@ -5,9 +5,6 @@
   </ul>
   <ul class="headerRight">
     <li class="buttonLi">
-      <button class="button" @click="clear">Clear</button>
-    </li>
-    <li class="buttonLi">
       <button class="button" @click="save">Export</button>
     </li>
     <li class="buttonLi">

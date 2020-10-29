@@ -42,6 +42,12 @@ export default class Canvas2D extends Canvas {
         };
 
         this.coloringMode = 'Monotone';
+        this.initialHue = 0.000;
+        this.hueStep = 0.0001;
+        this.generatorColors = [{ rgba: { r: 255, g: 0, b: 0, a: 1 } },
+                                { rgba: { r: 0, g: 255, b: 0, a: 1 } },
+                                { rgba: { r: 0, g: 0, b: 255, a: 1 } },
+                                { rgba: { r: 255, g: 255, b: 0, a: 1 } }];
     }
 
     init() {
@@ -89,13 +95,9 @@ export default class Canvas2D extends Canvas {
             }
         } else if(this.coloringMode === 'FirstGenerator') {
             this.colors = [];
-            const c = [new Vec3(1, 0, 0),
-                       new Vec3(0, 1, 0),
-                       new Vec3(0, 0, 1),
-                       new Vec3(1, 1, 0)];
             for(let i = 0; i < this.firstTags.length; i++) {
                 const rgb = c[this.firstTags[i]];
-                this.colors.push(rgb.x, rgb.y, rgb.z);
+                this.colors.push(rgba.r, rgba.g, rgba.b);
             }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
@@ -112,7 +114,7 @@ export default class Canvas2D extends Canvas {
         } else if(this.coloringMode === 'Gradation') {
             this.colors = [];
             for(let i = 0; i < this.points.length; i+=4) {
-                const rgb = Hsv2rgb(i * 0.00001, 1.0, 1.0);
+                const rgb = Hsv2rgb(this.initialHue + i * this.hueStep, 1.0, 1.0);
                 this.colors.push(rgb.x, rgb.y, rgb.z);
                 this.colors.push(rgb.x, rgb.y, rgb.z);
                 this.colors.push(rgb.x, rgb.y, rgb.z);
@@ -120,13 +122,10 @@ export default class Canvas2D extends Canvas {
             }
         } else if(this.coloringMode === 'FirstGenerator') {
             this.colors = [];
-            const c = [new Vec3(1, 0, 0),
-                       new Vec3(0, 1, 0),
-                       new Vec3(0, 0, 1),
-                       new Vec3(1, 1, 0)];
+            console.log(this.generatorColors);
             for(let i = 0; i < this.firstTags.length; i++) {
-                const rgb = c[this.firstTags[i]];
-                this.colors.push(rgb.x, rgb.y, rgb.z);
+                const c = this.generatorColors[this.firstTags[i]];
+                this.colors.push(c.rgba.r / 255, c.rgba.g / 255, c.rgba.b / 255);
             }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
