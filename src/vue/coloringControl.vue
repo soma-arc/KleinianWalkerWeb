@@ -25,12 +25,18 @@
            @input="changeLimitSetColor">
     First Generator
   </b-radio>
-  <b-field>
+  <b-field v-show="canvasManager.canvas2d.coloringMode === 'Monotone'">
     Limit Set Color
     <chrome-picker v-model="limitSetColors"
                    @input="changeLimitSetColor"></chrome-picker>
   </b-field>
-   </div>
+  <b-field v-show="canvasManager.canvas2d.coloringMode === 'Gradation'">
+    Gradation
+  </b-field>
+  <b-field v-show="canvasManager.canvas2d.coloringMode === 'FirstGenerator'">
+    First Generator
+  </b-field>
+</div>
 </template>
 
 <script>
