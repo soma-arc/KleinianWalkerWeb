@@ -5,7 +5,7 @@ export default class CanvasManager {
     constructor(canvasId){
         //this.scene = scene;
         this.resizeCallback = this.resize.bind(this);
-        this.canvas2d = new Canvas2D(canvasId, new Scene2d);
+        this.canvas2d = new Canvas2D(canvasId, new Scene2d());
 
     }
     

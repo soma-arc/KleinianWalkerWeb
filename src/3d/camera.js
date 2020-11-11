@@ -1,5 +1,5 @@
-import Vec2 from './geometry/vector2.js';
-import Vec3 from './geometry/vector3.js';
+import Vec2 from '../geometry/vector2.js';
+import Vec3 from '../geometry/vector3.js';
 
 export class Camera {
     /**

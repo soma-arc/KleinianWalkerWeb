@@ -1,6 +1,7 @@
 import SPK1_1 from './spk1_1.js';
 import { ComputeMatrix, ComputeFixedPoint,
          MobiusOnPoint, DistQuaternion3D } from './util.js';
+import { Hsv2rgb } from '../util.js';
 
 export default class DFSOperator {
     constructor(a, b, maxLevel, epsilon) {
@@ -24,6 +25,8 @@ export default class DFSOperator {
         this.init();
 
         this.points = [];
+        this.colorList = [];
+        this.firstTags = [];
     }
 
     init(){
@@ -176,6 +179,13 @@ export default class DFSOperator {
                              z[2].re, z[2].i, z[2].j,
                              z[3].re, z[3].i, z[3].j,
                              z[4].re, z[4].i, z[4].j);
+            const rgb = Hsv2rgb(this.points.length * 0.00001,1.0, 1.0);
+            this.colorList.push(rgb.x, rgb.y, rgb.z);
+            this.colorList.push(rgb.x, rgb.y, rgb.z);
+            this.colorList.push(rgb.x, rgb.y, rgb.z);
+            this.colorList.push(rgb.x, rgb.y, rgb.z);
+            this.firstTags.push(this.tags[1], this.tags[1],
+                                this.tags[1], this.tags[1]);
 			return true;
 		}else{
 			return false;
