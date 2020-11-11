@@ -48,6 +48,7 @@ export default class Canvas2D extends Canvas {
                                 { rgba: { r: 0, g: 255, b: 0, a: 1 } },
                                 { rgba: { r: 0, g: 0, b: 255, a: 1 } },
                                 { rgba: { r: 255, g: 255, b: 0, a: 1 } }];
+        this.rotation = 0;
     }
 
     init() {
@@ -96,8 +97,8 @@ export default class Canvas2D extends Canvas {
         } else if(this.coloringMode === 'FirstGenerator') {
             this.colors = [];
             for(let i = 0; i < this.firstTags.length; i++) {
-                const rgb = c[this.firstTags[i]];
-                this.colors.push(rgba.r, rgba.g, rgba.b);
+                const c = this.generatorColors[this.firstTags[i]];
+                this.colors.push(c.rgba.r, c.rgba.g, c.rgba.b);
             }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
@@ -163,6 +164,7 @@ export default class Canvas2D extends Canvas {
         gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorsVbo);
         gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
 
+        const modelM = Transform.rotate(this.rotation, new Vec3(0, 1, 0));
         const viewM = Transform.lookAt(new Point3(this.translate.x,
                                                   1, this.translate.y),
                                        new Point3(this.translate.x,
@@ -174,7 +176,7 @@ export default class Canvas2D extends Canvas {
                                            height / this.scale,
                                            -1, 1);
 
-        this.mvpM = projectM.mult(viewM);
+        this.mvpM = projectM.mult(viewM).mult(modelM);
         this.setUniformValues();
 
         gl.drawArrays(gl.LINES, 0, this.points.length/3);

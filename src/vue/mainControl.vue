@@ -63,6 +63,12 @@
       isT_abPlus
     </b-checkbox>
   </b-field>
+  <b-field >
+    Rotation
+    <b-slider v-model="canvasManager.canvas2d.rotation"
+              @input="modelMatChanged"
+      :value="0" :max="180" :min="-180"></b-slider>
+  </b-field>
   <b-field>
     MaxLevel
     <b-input v-model.number="canvasManager.canvas2d.maxLevel"
@@ -116,6 +122,9 @@ export default {
         changeLimitSetColor: function(event) {
             this.canvasManager.canvas2d.limitSetColor = this.limitSetColors;
             this.canvasManager.canvas2d.changeLimitSetColor();
+            this.canvasManager.canvas2d.render();
+        },
+        modelMatChanged: function(event) {
             this.canvasManager.canvas2d.render();
         }
     }
