@@ -28,7 +28,7 @@
       </b-dropdown-item>
     </b-dropdown>
   </b-field>
-  <div v-show="recipeName == 'GrandmaRecipe'">
+  <div v-show="recipeName === 'GrandmaRecipe'">
   <b-field>
     <span class="parameterLabel">t_a</span>
     <b-input v-model.number="canvasManager.canvas2d.t_a.re"
@@ -117,7 +117,7 @@ export default {
     },
     methods: {
         valueChanged: function(event) {
-            this.canvasManager.canvas2d.computeGrandmaLimitSet();
+            this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
         changeBackgroundColor: function(event) {
@@ -134,7 +134,10 @@ export default {
         },
         recipeChanged: function(event) {
             this.recipeName = event.text;
-            this.canvasManager.changeRecipe(event.text);
+            this.canvasManager.canvas2d.recipeName = event.text;
+            //this.canvasManager.changeRecipe(event.text);
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
         }
     }
 }

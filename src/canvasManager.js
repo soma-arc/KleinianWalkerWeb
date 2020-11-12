@@ -27,12 +27,12 @@ export default class CanvasManager {
         }
     }
 
-    changeRecipe(recipeName) {
-        if(recipeName === 'GrandmaRecipe') {
-            [this.points, this.colors, this.firstTags] = this.scene2d.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
-        } else if (recipeName === 'SakugawaRecipe') {
-            [this.points, this.colors, this.firstTags] = this.scene3d.computeSakugawaLimitSet(new Quaternion(-1, 0, 0, 0), 0, Math.PI * 0.5,
-                                                                                          this.maxLevel, this.threshold);
-        }
-    }
+    // changeRecipe(recipeName) {
+    //     if(recipeName === 'GrandmaRecipe') {
+    //         [this.points, this.colors, this.firstTags] = this.scene2d.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
+    //     } else if (recipeName === 'SakugawaRecipe') {
+    //         [this.points, this.colors, this.firstTags] = this.scene3d.computeSakugawaLimitSet(new Quaternion(-1, 0, 0, 0), 0, Math.PI * 0.5,
+    //                                                                                       this.maxLevel, this.threshold);
+    //     }
+    // }
 }

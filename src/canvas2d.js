@@ -28,12 +28,17 @@ export default class Canvas2D extends Canvas {
         };
         this.scene3d = new Scene3d();
 
-
+        // GrandmaRecipe
         this.t_a = new Complex(1.91, 0.05);
         this.t_b = new Complex(1.91, 0.05);
         //this.t_a = new Complex(-2, 0.0);
         //this.t_b = new Complex(-2, 0.0);
         this.isT_abPlus = true;
+        // sakugawaRecipe
+        this.q = new Quaternion(-1, 0, 0, 0);
+        this.thetaA = 0;
+        this.thetaB = Math.PI * 0.5;
+
         this.maxLevel = 15;
         this.threshold = 0.005;
 
@@ -52,6 +57,8 @@ export default class Canvas2D extends Canvas {
                                 { rgba: { r: 0, g: 0, b: 255, a: 1 } },
                                 { rgba: { r: 255, g: 255, b: 0, a: 1 } }];
         this.rotation = 0;
+
+        this.recipeName = 'GrandmaRecipe';
     }
 
     init() {
@@ -82,15 +89,21 @@ export default class Canvas2D extends Canvas {
         this.getUniformLocations();
     }
 
-    computeGrandmaLimitSet() {
-        this.preparePoints(this.t_a, this.t_b, this.isT_abPlus,
-                           this.maxLevel, this.threshold);
-    }
+    // computeGrandmaLimitSet() {
+    //     this.preparePoints(this.t_a, this.t_b, this.isT_abPlus,
+    //                        this.maxLevel, this.threshold);
+    // }
 
-    preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
-        // [this.points, this.colors, this.firstTags] = this.scene2d.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
-        [this.points, this.colors, this.firstTags] = this.scene3d.computeSakugawaLimitSet(new Quaternion(-1, 0, 0, 0), 0, Math.PI * 0.5,
-                                                                                          this.maxLevel, this.threshold);
+    preparePoints() {
+        if(this.recipeName === 'GrandmaRecipe') {
+            [this.points, this.colors, this.firstTags] =
+                this.scene2d.computeGrandmaLimitSet(this.t_a, this.t_b, this.isT_abPlus,
+                                                    this.maxLevel, this.threshold);
+        } else if (this.recipeName === 'SakugawaRecipe') {
+            [this.points, this.colors, this.firstTags] =
+                this.scene3d.computeSakugawaLimitSet(this.q, this.thetaA, this.thetaB,
+                                                     this.maxLevel, this.threshold);
+        }
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
         if(this.coloringMode === 'Monotone') {
