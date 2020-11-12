@@ -9,6 +9,7 @@ import Canvas from './canvas.js';
 import { Hsv2rgb } from './util.js';
 import Scene3d from './3d/scene3d.js';
 import Quaternion from './3d/quaternion.js';
+import { CameraOnSphere } from './3d/camera.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
@@ -20,6 +21,15 @@ export default class Canvas2D extends Canvas {
         this.scale = 300;
         this.distScale = 1.25;
         this.translate = new Vec2(0, 0);
+
+        this.camera = new CameraOnSphere(new Vec3(0, 0, 0), Math.PI / 3,
+                                         2, new Vec3(0, 1, 0));
+        this.cameraDistScale = 1.25;
+        this.mouseCameraState = {
+            isPressing: false,
+            prevPosition: new Vec2(0, 0),
+            button: -1
+        };
 
         this.mouseState = {
             isPressing: false,
@@ -183,15 +193,24 @@ export default class Canvas2D extends Canvas {
         gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
 
         const modelM = Transform.rotate(this.rotation, new Vec3(0, 1, 0));
-        const viewM = Transform.lookAt(new Point3(this.translate.x,
-                                                  1, this.translate.y),
-                                       new Point3(this.translate.x,
-                                                  0, this.translate.y),
-                                       new Vec3(0, 0, 1));
+
+        let viewM;
         let projectM;
         if(this.recipeName === 'SakugawaRecipe') {
+            viewM = Transform.lookAt(new Point3(this.camera.pos.x,
+                                                this.camera.pos.y,
+                                                this.camera.pos.z),
+                                     new Point3(this.camera.target.x,
+                                                this.camera.target.y,
+                                                this.camera.target.z),
+                                     this.camera.up);
             projectM = Transform.perspective(60, 0.001, 1000);
         } else {
+            viewM = Transform.lookAt(new Point3(this.translate.x,
+                                                1, this.translate.y),
+                                     new Point3(this.translate.x,
+                                                0, this.translate.y),
+                                     new Vec3(0, 0, 1));
             projectM = Transform.ortho2d(-width / this.scale,
                                          width / this.scale,
                                          -height / this.scale,
@@ -219,12 +238,35 @@ export default class Canvas2D extends Canvas {
                         2. * (my - rect.top - this.canvas.height/2) / this.scale);
     }
 
+    /**
+     * Calculate screen coordinates from mouse position
+     * [0, 0]x[width, height]
+     * @param {number} mx
+     * @param {number} my
+     * @returns {Vec2}
+     */
+    calcCameraCanvasCoord(mx, my) {
+        const rect = this.canvas.getBoundingClientRect();
+        return new Vec2((mx - rect.left) * this.pixelRatio,
+                        (my - rect.top) * this.pixelRatio);
+    }
+
     mouseWheelListener(event) {
         event.preventDefault();
         if (event.deltaY > 0) {
-            this.scale /= this.distScale;
+            if(this.recipeName === 'SakugawaRecipe') {
+                this.camera.cameraDistance *= this.cameraDistScale;
+                this.camera.update();
+            } else {
+                this.scale /= this.distScale;
+            }
         } else {
-            this.scale *= this.distScale;
+            if(this.recipeName === 'SakugawaRecipe') {
+                this.camera.cameraDistance /= this.cameraDistScale;
+                this.camera.update();
+            } else {
+                this.scale *= this.distScale;
+            }
         }
         this.render();
     }
@@ -232,26 +274,62 @@ export default class Canvas2D extends Canvas {
     mouseDownListener(event) {
         event.preventDefault();
         this.canvas.focus();
-        const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
-        this.mouseState.button = event.button;
+        if(this.recipeName === 'SakugawaRecipe') {
+            this.mouseCameraState.isPressing = true;
+            const mouse = this.calcCameraCanvasCoord(event.clientX,
+                                                     event.clientY);
+            this.mouseCameraState.prevPosition = mouse;
+            this.mouseCameraState.button = event.button;
+            if (event.button === Canvas.MOUSE_BUTTON_LEFT) {
+                this.camera.prevThetaPhi = new Vec2(this.camera.theta,
+                                                    this.camera.phi);
+            } else if (event.button === Canvas.MOUSE_BUTTON_RIGHT) {
+                this.camera.prevTarget = this.camera.target;
+            }
+        } else {
+            this.mouseState.isPressing = true;
+            const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+            this.mouseState.button = event.button;
 
-        this.mouseState.prevPosition = mouse;
-        this.mouseState.prevTranslate = this.translate;
-        this.mouseState.isPressing = true;
+            this.mouseState.prevPosition = mouse;
+            this.mouseState.prevTranslate = this.translate;
+            this.mouseState.isPressing = true;
+        }
     }
 
     mouseMoveListener(event) {
         event.preventDefault();
-        if (!this.mouseState.isPressing) return;
-        const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
-        if (this.mouseState.button === Canvas.MOUSE_BUTTON_RIGHT) {
-            this.translate = new Vec2(this.translate.x - (mouse.x - this.mouseState.prevPosition.x),
-                                      this.translate.y + mouse.y - this.mouseState.prevPosition.y);
-            this.render();
+        if(this.recipeName === 'SakugawaRecipe') {
+            if (!this.mouseCameraState.isPressing) return;
+            const mouse = this.calcCameraCanvasCoord(event.clientX,
+                                                     event.clientY);
+            if (this.mouseCameraState.button === Canvas.MOUSE_BUTTON_LEFT) {
+                const prevThetaPhi = this.camera.prevThetaPhi;
+                this.camera.theta = prevThetaPhi.x + (this.mouseCameraState.prevPosition.x - mouse.x) * 0.01;
+                this.camera.phi = prevThetaPhi.y - (this.mouseCameraState.prevPosition.y - mouse.y) * 0.01;
+                this.camera.update();
+                this.render();
+            } else if (this.mouseCameraState.button === Canvas.MOUSE_BUTTON_RIGHT) {
+                const d = mouse.sub(this.mouseCameraState.prevPosition);
+                const [xVec, yVec] = this.camera.getFocalXYVector(this.canvas.width,
+                                                                  this.canvas.height);
+                this.camera.target = this.camera.prevTarget.add(xVec.scale(-d.x* 0.1).add(yVec.scale(-d.y * 0.1)));
+                this.camera.update();
+                this.render();
+            }
+        } else {
+            if (!this.mouseState.isPressing) return;
+            const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+            if (this.mouseState.button === Canvas.MOUSE_BUTTON_RIGHT) {
+                this.translate = new Vec2(this.translate.x - (mouse.x - this.mouseState.prevPosition.x),
+                                          this.translate.y + mouse.y - this.mouseState.prevPosition.y);
+                this.render();
+            }
         }
     }
     
     mouseUpListener(event) {
+        this.mouseCameraState.isPressing = false;
         this.mouseState.isPressing = false;
         this.mouseState.button = -1;
     }
