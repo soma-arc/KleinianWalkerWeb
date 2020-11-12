@@ -35,7 +35,7 @@ export default class Canvas2D extends Canvas {
         //this.t_b = new Complex(-2, 0.0);
         this.isT_abPlus = true;
         // sakugawaRecipe
-        this.q = new Quaternion(-1, 0, 0, 0);
+        this.z0 = new Quaternion(-1, 0, 0, 0);
         this.thetaA = 0;
         this.thetaB = Math.PI * 0.5;
 
@@ -101,7 +101,7 @@ export default class Canvas2D extends Canvas {
                                                     this.maxLevel, this.threshold);
         } else if (this.recipeName === 'SakugawaRecipe') {
             [this.points, this.colors, this.firstTags] =
-                this.scene3d.computeSakugawaLimitSet(this.q, this.thetaA, this.thetaB,
+                this.scene3d.computeSakugawaLimitSet(this.z0, this.thetaA, this.thetaB,
                                                      this.maxLevel, this.threshold);
         }
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
@@ -188,12 +188,17 @@ export default class Canvas2D extends Canvas {
                                        new Point3(this.translate.x,
                                                   0, this.translate.y),
                                        new Vec3(0, 0, 1));
-        const projectM = Transform.ortho2d(-width / this.scale,
-                                           width / this.scale,
-                                           -height / this.scale,
-                                           height / this.scale,
-                                           -1, 1);
-
+        let projectM;
+        if(this.recipeName === 'SakugawaRecipe') {
+            projectM = Transform.perspective(60, 0.001, 1000);
+        } else {
+            projectM = Transform.ortho2d(-width / this.scale,
+                                         width / this.scale,
+                                         -height / this.scale,
+                                         height / this.scale,
+                                         -1, 1);
+        }
+        
         this.mvpM = projectM.mult(viewM).mult(modelM);
         this.setUniformValues();
 
