@@ -7,14 +7,16 @@ import { GetWebGL2Context, CreateSquareVbo, AttachShader,
          LinkProgram, CreateRGBATextures, CreateStaticVbo } from './glUtils.js';
 import Canvas from './canvas.js';
 import { Hsv2rgb } from './util.js';
+import Scene3d from './3d/scene3d.js';
+import Quaternion from './3d/quaternion.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
 
 export default class Canvas2D extends Canvas {
-    constructor(canvasId, scene) {
+    constructor(canvasId, scene2d) {
         super(canvasId);
-        this.scene = scene;
+        this.scene2d = scene2d;
         this.scale = 300;
         this.distScale = 1.25;
         this.translate = new Vec2(0, 0);
@@ -24,6 +26,7 @@ export default class Canvas2D extends Canvas {
             prevPosition: new Vec2(0, 0),
             button: -1
         };
+        this.scene3d = new Scene3d();
 
 
         this.t_a = new Complex(1.91, 0.05);
@@ -80,11 +83,14 @@ export default class Canvas2D extends Canvas {
     }
 
     computeGrandmaLimitSet() {
-        this.preparePoints(this.t_a, this.t_b, this.isT_abPlus, this.maxLevel, this.threshold);
+        this.preparePoints(this.t_a, this.t_b, this.isT_abPlus,
+                           this.maxLevel, this.threshold);
     }
 
     preparePoints(t_a, t_b, isT_abPlus, maxLevel, threshold) {
-        [this.points, this.colors, this.firstTags] = this.scene.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
+        // [this.points, this.colors, this.firstTags] = this.scene2d.computeGrandmaLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold);
+        [this.points, this.colors, this.firstTags] = this.scene3d.computeSakugawaLimitSet(new Quaternion(-1, 0, 0, 0), 0, Math.PI * 0.5,
+                                                                                          this.maxLevel, this.threshold);
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
         if(this.coloringMode === 'Monotone') {
@@ -123,7 +129,6 @@ export default class Canvas2D extends Canvas {
             }
         } else if(this.coloringMode === 'FirstGenerator') {
             this.colors = [];
-            console.log(this.generatorColors);
             for(let i = 0; i < this.firstTags.length; i++) {
                 const c = this.generatorColors[this.firstTags[i]];
                 this.colors.push(c.rgba.r / 255, c.rgba.g / 255, c.rgba.b / 255);

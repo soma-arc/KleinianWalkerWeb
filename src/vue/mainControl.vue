@@ -3,6 +3,7 @@
   Recipe
   <b-field>
     <b-dropdown
+      @change="recipeChanged"
       :scrollable="isScrollable"
       :max-height="maxHeight"
       v-model="currentMenu"
@@ -15,7 +16,7 @@
         <b-icon icon="menu-down"></b-icon>
       </button>
       
-      <b-dropdown-item 
+      <b-dropdown-item
         v-for="(menu, index) in menus"
         :key="index"
         :value="menu" aria-role="listitem">
@@ -27,6 +28,7 @@
       </b-dropdown-item>
     </b-dropdown>
   </b-field>
+  <div v-show="recipeName == 'GrandmaRecipe'">
   <b-field>
     <span class="parameterLabel">t_a</span>
     <b-input v-model.number="canvasManager.canvas2d.t_a.re"
@@ -63,6 +65,7 @@
       isT_abPlus
     </b-checkbox>
   </b-field>
+  </div>
   <b-field >
     Rotation
     <b-slider v-model="canvasManager.canvas2d.rotation"
@@ -107,7 +110,9 @@ export default {
             currentMenu: { text: 'GrandmaRecipe' },
             menus: [
                 { text: 'GrandmaRecipe'},
-            ]
+                { text: 'SakugawaRecipe'}
+            ],
+            recipeName: "GrandmaRecipe"             
         }
     },
     methods: {
@@ -126,6 +131,10 @@ export default {
         },
         modelMatChanged: function(event) {
             this.canvasManager.canvas2d.render();
+        },
+        recipeChanged: function(event) {
+            this.recipeName = event.text;
+            this.canvasManager.changeRecipe(event.text);
         }
     }
 }

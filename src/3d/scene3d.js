@@ -1,7 +1,7 @@
 import SakugawaRecipe from './sakugawaRecipe.js';
 import DFSOperator from './dfsOperator.js';
 
-export default class Scene2d {
+export default class Scene3d {
     constructor() {
     }
 

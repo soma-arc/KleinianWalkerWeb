@@ -184,8 +184,8 @@ export default class DFSOperator {
             this.colorList.push(rgb.x, rgb.y, rgb.z);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
             this.colorList.push(rgb.x, rgb.y, rgb.z);
-            this.firstTags.push(this.tags[1], this.tags[1],
-                                this.tags[1], this.tags[1]);
+            this.firstTags.push(this.tags[1]-1, this.tags[1]-1,
+                                this.tags[1]-1, this.tags[1]-1);
 			return true;
 		}else{
 			return false;
