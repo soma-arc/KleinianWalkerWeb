@@ -29,91 +29,10 @@
     </b-dropdown>
   </b-field>
   <div v-show="recipeName === 'GrandmaRecipe'">
-    <b-field>
-      <span class="parameterLabel">t_a</span>
-      <b-input v-model.number="canvasManager.canvas2d.t_a.re"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-      <b-input v-model.number="canvasManager.canvas2d.t_a.im"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
-    <b-field>
-      <span class="parameterLabel">t_b</span>
-      <b-input v-model.number="canvasManager.canvas2d.t_b.re"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-      <b-input v-model.number="canvasManager.canvas2d.t_b.im"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
-    <b-field>
-      <b-checkbox v-model="canvasManager.canvas2d.isT_abPlus"
-                  @input="valueChanged">
-        isT_abPlus
-      </b-checkbox>
-    </b-field>
+    <grandma-ui :canvasManager="canvasManager"/>
   </div>
   <div v-show="recipeName === 'SakugawaRecipe'">
-    <span class="parameterLabel">z0 (Quaternion)</span>
-    <b-field>
-      <b-input v-model.number="canvasManager.canvas2d.z0.re"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-      <b-input v-model.number="canvasManager.canvas2d.z0.i"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
-    <b-field>
-      <b-input v-model.number="canvasManager.canvas2d.z0.j"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-      <b-input v-model.number="canvasManager.canvas2d.z0.k"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
-    <b-field>
-      <span class="parameterLabel">thetaA</span>
-      <b-input v-model.number="canvasManager.canvas2d.thetaA"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
-    <b-field>
-      <span class="parameterLabel">thetaB</span>
-      <b-input v-model.number="canvasManager.canvas2d.thetaB"
-               @input="valueChanged"
-               placeholder="Number"
-               type="number"
-               step="0.01">
-      </b-input>
-    </b-field>
+    <sakugawa-ui :canvasManager="canvasManager"/>
   </div>
   <b-field>
     Rotation
@@ -142,10 +61,14 @@
 
 <script>
 import {Chrome} from 'vue-color'
+import GrandmaUI from './grandmaUI.vue';
+import SakugawaUI from './sakugawaUI.vue';
 
 export default {
     components: {
         'chrome-picker': Chrome,
+        'grandma-ui': GrandmaUI,
+        'sakugawa-ui': SakugawaUI
     },
     props: ['canvasManager'],
     data: function () {
@@ -161,7 +84,7 @@ export default {
                 { text: 'GrandmaRecipe'},
                 { text: 'SakugawaRecipe'}
             ],
-            recipeName: "GrandmaRecipe"             
+            recipeName: "GrandmaRecipe"
         }
     },
     methods: {
