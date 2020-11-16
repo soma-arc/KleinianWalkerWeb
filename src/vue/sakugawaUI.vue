@@ -1,5 +1,15 @@
 <template>
 <div>
+  <b-field>
+    <b-dropdown aria-role="list">
+      <button class="button is-info" slot="trigger">
+        <span>Load Preset</span>
+        <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
+      </button>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToParam1">Default</b-dropdown-item>
+    </b-dropdown>
+  </b-field>
   <span class="parameterLabel">z0 (Quaternion)</span>
   <b-field>
     <b-input v-model.number="canvasManager.canvas2d.z0.re"
@@ -64,6 +74,16 @@ export default {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        changeToParam1: function(event) {
+            this.canvasManager.canvas2d.z0.re = -1;
+            this.canvasManager.canvas2d.z0.i = 0;
+            this.canvasManager.canvas2d.z0.j = 0;
+            this.canvasManager.canvas2d.z0.k = 0;
+            this.canvasManager.canvas2d.thataA = 0;
+            this.canvasManager.canvas2d.thataB = Math.PI * 0.5;
+            
+            this.valueChanged();
+        }
     }
 }
 </script>
