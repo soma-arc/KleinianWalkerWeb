@@ -1,8 +1,24 @@
 <template>
 <div>
   <b-field>
-      <span class="parameterLabel">t_a</span>
-      <b-input v-model.number="canvasManager.canvas2d.t_a.re"
+    <b-dropdown aria-role="list">
+      <button class="button is-info" slot="trigger">
+        <span>Load Preset</span>
+        <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
+      </button>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToDefault">Default</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToApollonius">Apollonius</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToApollonianFlower">Apollonian Flower</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToApollonianFlower2">Apollonian Flower2</b-dropdown-item>
+    </b-dropdown>
+  </b-field>
+  <b-field>
+    <span class="parameterLabel">t_a</span>
+    <b-input v-model.number="canvasManager.canvas2d.t_a.re"
                @input="valueChanged"
                placeholder="Number"
                type="number"
@@ -46,6 +62,12 @@ export default {
     props: ['canvasManager'],
     data: function () {
         return {
+            currentParameter: { text: 'default'},
+            params: [
+                {text: 'default'},
+                {text: 'apollonius'},
+                {text: 'apollinian flower'}
+            ]
         }
     },
     methods: {
@@ -53,6 +75,40 @@ export default {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        changeToDefault: function(event){
+            this.canvasManager.canvas2d.t_a.re = 1.91;
+            this.canvasManager.canvas2d.t_a.im = 0.05;
+            this.canvasManager.canvas2d.t_b.re = 1.91;
+            this.canvasManager.canvas2d.t_b.im = 0.05;
+            this.canvasManager.canvas2d.isT_abPlus = true;
+            this.valueChanged();
+        },
+        changeToApollonius: function(event) {
+            this.canvasManager.canvas2d.t_a.re = -2;
+            this.canvasManager.canvas2d.t_a.im = 0;
+            this.canvasManager.canvas2d.t_b.re = -2;
+            this.canvasManager.canvas2d.t_b.im = 0;
+            this.canvasManager.canvas2d.isT_abPlus = true;
+            this.valueChanged();
+        },
+        changeToApollonianFlower: function(event) {
+            this.canvasManager.canvas2d.t_a.re = 1.889;
+            this.canvasManager.canvas2d.t_a.im = 0.05;
+            this.canvasManager.canvas2d.t_b.re = 2;
+            this.canvasManager.canvas2d.t_b.im = 0;
+            this.canvasManager.canvas2d.isT_abPlus = false;
+            this.canvasManager.canvas2d.maxLevel = 50;
+            this.valueChanged();
+        },
+        changeToApollonianFlower2: function(event) {
+            this.canvasManager.canvas2d.t_a.re = 1.90378;
+            this.canvasManager.canvas2d.t_a.im = -0.03958;
+            this.canvasManager.canvas2d.t_b.re = 2;
+            this.canvasManager.canvas2d.t_b.im = 0;
+            this.canvasManager.canvas2d.isT_abPlus = false;
+            this.canvasManager.canvas2d.maxLevel = 50;
+            this.valueChanged();
+        }
     }
 }
 </script>
