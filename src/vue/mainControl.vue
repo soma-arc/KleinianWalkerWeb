@@ -34,6 +34,12 @@
   <div v-show="recipeName === 'SakugawaRecipe'">
     <sakugawa-ui :canvasManager="canvasManager"/>
   </div>
+  <div v-show="recipeName === 'JorgensenRecipe'">
+    <jorgensen-ui :canvasManager="canvasManager"/>
+  </div>
+  <div v-show="recipeName === 'RileyRecipe'">
+    <riley-ui :canvasManager="canvasManager"/>
+  </div>
   <b-field>
     Rotation
     <b-slider v-model="canvasManager.canvas2d.rotation"
@@ -63,12 +69,16 @@
 import {Chrome} from 'vue-color'
 import GrandmaUI from './grandmaUI.vue';
 import SakugawaUI from './sakugawaUI.vue';
+import JorgensenUI from './jorgensenUI.vue';
+import RileyUI from './rileyUI.vue';
 
 export default {
     components: {
         'chrome-picker': Chrome,
         'grandma-ui': GrandmaUI,
-        'sakugawa-ui': SakugawaUI
+        'sakugawa-ui': SakugawaUI,
+        'jorgensen-ui': JorgensenUI,
+        'riley-ui': RileyUI
     },
     props: ['canvasManager'],
     data: function () {
@@ -82,7 +92,9 @@ export default {
             currentMenu: { text: 'GrandmaRecipe' },
             menus: [
                 { text: 'GrandmaRecipe'},
-                { text: 'SakugawaRecipe'}
+                { text: 'SakugawaRecipe'},
+                { text: 'JorgensenRecipe'},
+                { text: 'RileyRecipe'}
             ],
             recipeName: "GrandmaRecipe"
         }

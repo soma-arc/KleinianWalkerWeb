@@ -41,13 +41,19 @@ export default class Canvas2D extends Canvas {
         // GrandmaRecipe
         this.t_a = new Complex(1.91, 0.05);
         this.t_b = new Complex(1.91, 0.05);
-        //this.t_a = new Complex(-2, 0.0);
-        //this.t_b = new Complex(-2, 0.0);
         this.isT_abPlus = true;
+        // jorgensenRecipe
+        this.jt_a = new Complex(1.87, 0.1);
+        this.jt_b = new Complex(1.87, -0.1);
+        this.jisT_abPlus = false;
+        
         // sakugawaRecipe
         this.z0 = new Quaternion(-1, 0, 0, 0);
         this.thetaA = 0;
         this.thetaB = Math.PI * 0.5;
+
+        // Riley Recipe
+        this.c = new Complex(2, 0);
 
         this.maxLevel = 15;
         this.threshold = 0.005;
@@ -109,10 +115,19 @@ export default class Canvas2D extends Canvas {
             [this.points, this.colors, this.firstTags] =
                 this.scene2d.computeGrandmaLimitSet(this.t_a, this.t_b, this.isT_abPlus,
                                                     this.maxLevel, this.threshold);
+        } else if (this.recipeName === 'JorgensenRecipe'){
+            [this.points, this.colors, this.firstTags] =
+                this.scene2d.computeJorgensenLimitSet(this.jt_a, this.jt_b, this.jisT_abPlus,
+                                                    this.maxLevel, this.threshold);
         } else if (this.recipeName === 'SakugawaRecipe') {
             [this.points, this.colors, this.firstTags] =
                 this.scene3d.computeSakugawaLimitSet(this.z0, this.thetaA, this.thetaB,
                                                      this.maxLevel, this.threshold);
+        } else if (this.recipeName === 'RileyRecipe') {
+            [this.points, this.colors, this.firstTags] =
+                this.scene2d.computeRileyLimitSet(this.c,
+                                                  this.maxLevel,
+                                                  this.threshold);
         }
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
