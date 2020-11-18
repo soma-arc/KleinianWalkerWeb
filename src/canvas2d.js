@@ -55,6 +55,11 @@ export default class Canvas2D extends Canvas {
         // Riley Recipe
         this.c = new Complex(2, 0);
 
+        // OPT Recope
+        this.origin = Complex.ZERO;
+        this.a1 = new Complex(0.25, 0);
+        this.a2 = new Complex(0.25, 0);
+
         this.maxLevel = 15;
         this.threshold = 0.005;
 
@@ -128,6 +133,13 @@ export default class Canvas2D extends Canvas {
                 this.scene2d.computeRileyLimitSet(this.c,
                                                   this.maxLevel,
                                                   this.threshold);
+        } else if (this.recipeName === 'OncePuncturedTorus'){
+            [this.points, this.colors, this.firstTags] =
+                this.scene2d.computeOPTLimitSet(this.a1,
+                                                this.a2,
+                                                this.origin,
+                                                this.maxLevel,
+                                                this.threshold);
         }
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
@@ -207,7 +219,7 @@ export default class Canvas2D extends Canvas {
         gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorsVbo);
         gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
 
-        const modelM = Transform.rotate(this.rotation, new Vec3(0, 1, 0));
+        let modelM = Transform.rotate(this.rotation, new Vec3(0, 1, 0));
 
         let viewM;
         let projectM;
@@ -236,8 +248,23 @@ export default class Canvas2D extends Canvas {
         this.mvpM = projectM.mult(viewM).mult(modelM);
         this.setUniformValues();
 
-        gl.drawArrays(gl.LINES, 0, this.points.length/3);
+        if(this.recipeName === 'OncePuncturedTorus') {
+            gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
+        } else {
+            gl.drawArrays(gl.LINES, 0, this.points.length/3);
+        }
         gl.flush();
+        if(this.recipeName === 'OncePuncturedTorus') {
+            const tmpM = modelM;
+            for(let i = -3; i < 3; i++) {
+                if(i === 0) continue;
+                modelM = tmpM.mult(Transform.translate(i, 0, 0));
+                this.mvpM = projectM.mult(viewM).mult(modelM);
+                this.setUniformValues();
+                gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
+            }
+            gl.flush();
+        }
     }
 
     /**

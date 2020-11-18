@@ -40,6 +40,9 @@
   <div v-show="recipeName === 'RileyRecipe'">
     <riley-ui :canvasManager="canvasManager"/>
   </div>
+  <div v-show="recipeName === 'OncePuncturedTorus'">
+    <opt-ui :canvasManager="canvasManager"/>
+  </div>
   <b-field>
     Rotation
     <b-slider v-model="canvasManager.canvas2d.rotation"
@@ -71,6 +74,7 @@ import GrandmaUI from './grandmaUI.vue';
 import SakugawaUI from './sakugawaUI.vue';
 import JorgensenUI from './jorgensenUI.vue';
 import RileyUI from './rileyUI.vue';
+import OPTUI from './optUI.vue';
 
 export default {
     components: {
@@ -78,7 +82,8 @@ export default {
         'grandma-ui': GrandmaUI,
         'sakugawa-ui': SakugawaUI,
         'jorgensen-ui': JorgensenUI,
-        'riley-ui': RileyUI
+        'riley-ui': RileyUI,
+        'opt-ui': OPTUI
     },
     props: ['canvasManager'],
     data: function () {
@@ -94,7 +99,8 @@ export default {
                 { text: 'GrandmaRecipe'},
                 { text: 'SakugawaRecipe'},
                 { text: 'JorgensenRecipe'},
-                { text: 'RileyRecipe'}
+                { text: 'RileyRecipe'},
+                { text: 'OncePuncturedTorus'}
             ],
             recipeName: "GrandmaRecipe"
         }

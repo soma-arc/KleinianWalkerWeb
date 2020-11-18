@@ -85,21 +85,21 @@ export default class ComplexProbability {
                                                       this.cR0);
 		const intersectR0P1 = Circle.getIntersections(this.cR0,
                                                       this.cP1);
-		if(intersectP0Q0[0].im() > intersectP0Q0[1].im()){
+		if(intersectP0Q0[0].im > intersectP0Q0[1].im){
 			this.aboveIntersectP0Q0 = intersectP0Q0[0];
 			this.bottomIntersectP0Q0 = intersectP0Q0[1];
 		}else{
 			this.aboveIntersectP0Q0 = intersectP0Q0[1];
 			this.bottomIntersectP0Q0 = intersectP0Q0[0];
 		}
-		if(intersectQ0R0[0].im() > intersectQ0R0[1].im()){
+		if(intersectQ0R0[0].im > intersectQ0R0[1].im){
 			this.aboveIntersectQ0R0 = intersectQ0R0[0];
 			this.bottomIntersectQ0R0 = intersectQ0R0[1];
 		}else{
 			this.aboveIntersectQ0R0 = intersectQ0R0[1];
 			this.bottomIntersectQ0R0 = intersectQ0R0[0];
 		}
-		if(intersectR0P1[0].im() > intersectR0P1[1].im()){
+		if(intersectR0P1[0].im > intersectR0P1[1].im) {
 			this.aboveIntersectR0P1 = intersectR0P1[0];
 			this.bottomIntersectR0P1 = intersectR0P1[1];
 		}else{
