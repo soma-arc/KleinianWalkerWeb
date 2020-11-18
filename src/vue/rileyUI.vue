@@ -47,8 +47,8 @@
             this.canvasManager.canvas2d.render();
         },
         changeToDefault: function(event){
-            this.canvasManager.canvas2d.c.re = 2;
-            this.canvasManager.canvas2d.c.im = 0;
+            this.canvasManager.canvas2d.c.re = 1.13;
+            this.canvasManager.canvas2d.c.im = -0.43;
             this.valueChanged();
         }
     }

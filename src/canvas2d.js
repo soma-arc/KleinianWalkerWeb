@@ -53,7 +53,7 @@ export default class Canvas2D extends Canvas {
         this.thetaB = Math.PI * 0.5;
 
         // Riley Recipe
-        this.c = new Complex(2, 0);
+        this.c = new Complex(1.13, -0.43);
 
         // OPT Recope
         this.origin = Complex.ZERO;
