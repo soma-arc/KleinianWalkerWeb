@@ -30,7 +30,7 @@ export default class ComplexProbability {
 
     /**
      *
-     * @param {Complex} Q
+     * @param {Complex} step
      */    
 	moveQ(step){
 		const Q = this.q0.add(step);

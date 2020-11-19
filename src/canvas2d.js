@@ -57,8 +57,9 @@ export default class Canvas2D extends Canvas {
 
         // OPT Recope
         this.origin = Complex.ZERO;
-        this.a1 = new Complex(0.25, 0);
-        this.a2 = new Complex(0.25, 0);
+        this.a1 = new Complex(0.49, 0.15);
+        this.a2 = new Complex(0.25, 0.41);
+        this.showControlPoints = true;
 
         this.maxLevel = 15;
         this.threshold = 0.005;
@@ -91,6 +92,20 @@ export default class Canvas2D extends Canvas {
         this.compileRenderShader();
 
         this.preparePoints(this.t_a, this.t_b, this.isT_abPlus, this.maxLevel, this.threshold);
+
+        const r = 0.05;
+        const numSplit = 64;
+        this.circlePoints = [];
+        this.circleColors = [];
+        const step = 2 * Math.PI / numSplit;
+        let rad = 0;
+        for(let i = 0; i < numSplit; i++) {
+            this.circlePoints.push(r * Math.cos(rad), 0, r * Math.sin(rad));
+            this.circleColors.push(0, 1, 0);;
+            rad += step;
+        }
+        this.circleVbo = CreateStaticVbo(this.gl, this.circlePoints);
+        this.circleColorsVbo = CreateStaticVbo(this.gl, this.circleColors);
         this.render();
     }
 
@@ -240,8 +255,8 @@ export default class Canvas2D extends Canvas {
                                      new Vec3(0, 0, 1));
             projectM = Transform.ortho2d(-width / this.scale,
                                          width / this.scale,
-                                         -height / this.scale,
                                          height / this.scale,
+                                         -height / this.scale,
                                          -1, 1);
         }
         
@@ -250,13 +265,10 @@ export default class Canvas2D extends Canvas {
 
         if(this.recipeName === 'OncePuncturedTorus') {
             gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
-        } else {
-            gl.drawArrays(gl.LINES, 0, this.points.length/3);
-        }
-        gl.flush();
-        if(this.recipeName === 'OncePuncturedTorus') {
+            gl.flush();
+
             const tmpM = modelM;
-            for(let i = -3; i < 3; i++) {
+            for(let i = -8; i < 8; i++) {
                 if(i === 0) continue;
                 modelM = tmpM.mult(Transform.translate(i, 0, 0));
                 this.mvpM = projectM.mult(viewM).mult(modelM);
@@ -264,7 +276,29 @@ export default class Canvas2D extends Canvas {
                 gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
             }
             gl.flush();
+            if(this.showControlPoints) {
+                modelM = tmpM.mult(Transform.translate(this.a1.re, 0, this.a1.im));
+                this.mvpM = projectM.mult(viewM).mult(modelM);
+                this.setUniformValues();
+                gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleVbo);
+                gl.vertexAttribPointer(this.vPositionAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+                gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleColorsVbo);
+                gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+                gl.drawArrays(gl.LINE_LOOP, 0, this.circlePoints.length/3);
+
+                modelM = tmpM.mult(Transform.translate(this.a2.re, 0, this.a2.im));
+                this.mvpM = projectM.mult(viewM).mult(modelM);
+                this.setUniformValues();
+                gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleVbo);
+                gl.vertexAttribPointer(this.vPositionAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+                gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleColorsVbo);
+                gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+                gl.drawArrays(gl.LINE_LOOP, 0, this.circlePoints.length/3);
+            }
+        } else {
+            gl.drawArrays(gl.LINES, 0, this.points.length/3);
         }
+        gl.flush();
     }
 
     /**
@@ -328,15 +362,31 @@ export default class Canvas2D extends Canvas {
             } else if (event.button === Canvas.MOUSE_BUTTON_RIGHT) {
                 this.camera.prevTarget = this.camera.target;
             }
-        } else {
+        } else if(this.recipeName === 'OncePuncturedTorus' && this.showControlPoints) {
             this.mouseState.isPressing = true;
             const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
-            this.mouseState.button = event.button;
-
-            this.mouseState.prevPosition = mouse;
-            this.mouseState.prevTranslate = this.translate;
-            this.mouseState.isPressing = true;
+            const d1 = Math.sqrt(Math.pow(mouse.x - this.a1.re, 2) +
+                                 Math.pow(mouse.y - this.a1.im, 2));
+            const d2 = Math.sqrt(Math.pow(mouse.x - this.a2.re, 2) +
+                                 Math.pow(mouse.y - this.a2.im, 2));
+            console.log('opt')
+            console.log(d1);
+            if(d1 < 0.05) {
+                this.selecting = 'a1'
+                console.log('sa1')
+            } else if(d2 < 0.05) {
+                this.selecting = 'a2'
+                console.log('sa2')
+            } else {
+                this.selecting = -1;
+            }
+           
         }
+        const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+        this.mouseState.button = event.button;
+        this.mouseState.prevPosition = mouse;
+        this.mouseState.prevTranslate = this.translate;
+        this.mouseState.isPressing = true;
     }
 
     mouseMoveListener(event) {
@@ -362,6 +412,19 @@ export default class Canvas2D extends Canvas {
         } else {
             if (!this.mouseState.isPressing) return;
             const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+            if(this.showControlPoints &&
+               this.recipeName === 'OncePuncturedTorus' &&
+               this.mouseState.button === Canvas.MOUSE_BUTTON_LEFT) {
+                if(this.selecting === 'a1') {
+                    this.a1.re = mouse.x;
+                    this.a1.im = mouse.y;
+                } else if (this.selecting === 'a2') {
+                    this.a2.re = mouse.x;
+                    this.a2.im = mouse.y;
+                }
+                this.preparePoints();
+                this.render();
+            }
             if (this.mouseState.button === Canvas.MOUSE_BUTTON_RIGHT) {
                 this.translate = new Vec2(this.translate.x - (mouse.x - this.mouseState.prevPosition.x),
                                           this.translate.y + mouse.y - this.mouseState.prevPosition.y);
