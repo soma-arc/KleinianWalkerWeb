@@ -31,9 +31,6 @@
   <div v-show="recipeName === 'GrandmaRecipe'">
     <grandma-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'SakugawaRecipe'">
-    <sakugawa-ui :canvasManager="canvasManager"/>
-  </div>
   <div v-show="recipeName === 'JorgensenRecipe'">
     <jorgensen-ui :canvasManager="canvasManager"/>
   </div>
@@ -42,6 +39,9 @@
   </div>
   <div v-show="recipeName === 'OncePuncturedTorus'">
     <opt-ui :canvasManager="canvasManager"/>
+  </div>
+  <div v-show="recipeName === 'SakugawaRecipe'">
+    <sakugawa-ui :canvasManager="canvasManager"/>
   </div>
   <b-field>
     Rotation
@@ -97,10 +97,10 @@ export default {
             currentMenu: { text: 'GrandmaRecipe' },
             menus: [
                 { text: 'GrandmaRecipe'},
-                { text: 'SakugawaRecipe'},
                 { text: 'JorgensenRecipe'},
                 { text: 'RileyRecipe'},
-                { text: 'OncePuncturedTorus'}
+                { text: 'OncePuncturedTorus'},
+                { text: 'SakugawaRecipe'}
             ],
             recipeName: "GrandmaRecipe"
         }

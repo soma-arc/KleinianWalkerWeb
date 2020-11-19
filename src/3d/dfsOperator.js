@@ -72,15 +72,15 @@ export default class DFSOperator {
         repet[4][3] = this.gens[3].mult(this.gens[4]);
         repet[4][4] = ComputeMatrix(this.gens[3], this.gens[2], this.gens[1], this.gens[4]);
 
-        console.log('---Compute Fixed Points---');
+        //console.log('---Compute Fixed Points---');
         for(let i = 1; i <= 4; i ++){
 			for(let j = 1; j <= 4; j++){
-                console.log(`(${i}, ${j})`);
+                //console.log(`(${i}, ${j})`);
 				this.fixedPoint[i][j] = ComputeFixedPoint(repet[i][j]);
-	            console.log(this.fixedPoint[i][j].toString());
+	            // console.log(this.fixedPoint[i][j].toString());
 			}
 		}
-        console.log('---done---');
+        //console.log('---done---');
     }
 
     search() {
