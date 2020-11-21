@@ -4,6 +4,7 @@ import RileyRecipe from './rileyRecipe.js';
 import DFSOperator from './dfsOperator.js';
 import OPTDFSOperator from './OPTDFSOperator.js';
 import OPTRecipe from './optRecipe.js';
+import GrandmaSpecialtiesRecipe from './grandmaSpecialtiesRecipe.js';
 
 export default class Scene2d {
     constructor() {
@@ -33,6 +34,13 @@ export default class Scene2d {
     computeOPTLimitSet(a1, a2, origin, maxLevel, threshold) {
         const recipe = new OPTRecipe(a1, a2, origin);
         const dfs = new OPTDFSOperator(recipe.gens);
+        dfs.search(maxLevel, threshold);
+        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+    }
+
+    computeGrandmaSpecialtiesLimitSet(t_a, t_b, t_ab, isR_plus, maxLevel, threshold) {
+        const recipe = new GrandmaSpecialtiesRecipe(t_a, t_b, t_ab, isR_plus);
+        const dfs = new DFSOperator(recipe.gens);
         dfs.search(maxLevel, threshold);
         return [dfs.pointList, dfs.colorList, dfs.firstTags];
     }

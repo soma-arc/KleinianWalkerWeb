@@ -61,6 +61,12 @@ export default class Canvas2D extends Canvas {
         this.a2 = new Complex(0.25, 0.41);
         this.showControlPoints = true;
 
+        // GrandmaSpecialtiesRecipe
+        this.specialties_a = new Complex(0, 0);
+        this.specialties_b = new Complex(0, 0);
+        this.specialties_ab = new Complex(0, 0);
+        this.specialties_R_plus = true;
+        
         this.maxLevel = 15;
         this.threshold = 0.005;
 
@@ -101,7 +107,7 @@ export default class Canvas2D extends Canvas {
         let rad = 0;
         for(let i = 0; i < numSplit; i++) {
             this.circlePoints.push(r * Math.cos(rad), 0, r * Math.sin(rad));
-            this.circleColors.push(0, 1, 0);;
+            this.circleColors.push(0, 1, 0);
             rad += step;
         }
         this.circleVbo = CreateStaticVbo(this.gl, this.circlePoints);
@@ -155,6 +161,14 @@ export default class Canvas2D extends Canvas {
                                                 this.origin,
                                                 this.maxLevel,
                                                 this.threshold);
+        } else if (this.recipeName === 'GrandmaSpecialtiesRecipe') {
+            [this.points, this.colors, this.firstTags] =
+                this.scene2d.computeGrandmaSpecialtiesLimitSet(this.specialties_a,
+                                                               this.specialties_b,
+                                                               this.specialties_ab,
+                                                               this.specialties_R_plus,
+                                                               this.maxLevel,
+                                                               this.threshold);
         }
         this.pointsVbo = CreateStaticVbo(this.gl, this.points);
 
