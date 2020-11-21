@@ -369,14 +369,14 @@ export default class Canvas2D extends Canvas {
                                  Math.pow(mouse.y - this.a1.im, 2));
             const d2 = Math.sqrt(Math.pow(mouse.x - this.a2.re, 2) +
                                  Math.pow(mouse.y - this.a2.im, 2));
-            console.log('opt')
-            console.log(d1);
+            //console.log('opt')
+            //console.log(d1);
             if(d1 < 0.05) {
-                this.selecting = 'a1'
-                console.log('sa1')
+                this.selecting = 'a1';
+                //console.log('sa1')
             } else if(d2 < 0.05) {
-                this.selecting = 'a2'
-                console.log('sa2')
+                this.selecting = 'a2';
+                //console.log('sa2')
             } else {
                 this.selecting = -1;
             }

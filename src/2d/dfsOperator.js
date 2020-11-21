@@ -33,26 +33,57 @@ export default class DFSOperator {
      * @param {[SL2C]} gens
      */
     computeCircularWords(gens) {
-        this.circularWords = new Array(4);
-        this.circularWords[0] = new Array(3);
-        this.circularWords[0][0] = gens[1].mult(gens[2]).mult(gens[3]).mult(gens[0]);
-        this.circularWords[0][1] = gens[0];
-        this.circularWords[0][2] = gens[3].mult(gens[2]).mult(gens[1]).mult(gens[0]);
+        this.is_aaBParabolic = false;
+        const trace_aaB = gens[0].mult(gens[0]).mult(gens[3]).trace().abs();
+        if(1.9 < trace_aaB && trace_aaB < 2.1) {
+            console.log('aaB is parabolic');
+            this.numFixedPoint = [4, 3, 4, 3];
+            this.is_aaBParabolic = true;
 
-        this.circularWords[1] = new Array(3);
-        this.circularWords[1][0] = gens[2].mult(gens[3]).mult(gens[0]).mult(gens[1]);
-        this.circularWords[1][1] = gens[1];
-        this.circularWords[1][2] = gens[0].mult(gens[3]).mult(gens[2]).mult(gens[1]);
+            this.circularWords = new Array(4);
+            this.circularWords[0] = new Array(4);
+            this.circularWords[0][0] = gens[1].mult(gens[2]).mult(gens[3]).mult(gens[0]);
+            this.circularWords[0][1] = gens[0].mult(gens[3]).mult(gens[0]);
+            this.circularWords[0][2] = gens[3].mult(gens[0]).mult(gens[0]);
+            this.circularWords[0][3] = gens[3].mult(gens[2]).mult(gens[1]).mult(gens[0]);
 
-        this.circularWords[2] = new Array(3);
-        this.circularWords[2][0] = gens[3].mult(gens[0]).mult(gens[1]).mult(gens[2]);
-        this.circularWords[2][1] = gens[2];
-        this.circularWords[2][2] = gens[1].mult(gens[0]).mult(gens[3]).mult(gens[2]);
+            this.circularWords[1] = new Array(3);
+            this.circularWords[1][0] = gens[2].mult(gens[3]).mult(gens[0]).mult(gens[1]);
+            this.circularWords[1][1] = gens[2].mult(gens[2]).mult(gens[1]);
+            this.circularWords[1][2] = gens[0].mult(gens[3]).mult(gens[2]).mult(gens[1]);
 
-        this.circularWords[3] = new Array(3);
-        this.circularWords[3][0] = gens[0].mult(gens[1]).mult(gens[2]).mult(gens[3]);
-        this.circularWords[3][1] = gens[3];
-        this.circularWords[3][2] = gens[2].mult(gens[1]).mult(gens[0]).mult(gens[3]);
+            this.circularWords[2] = new Array(4);
+            this.circularWords[2][0] = gens[3].mult(gens[0]).mult(gens[1]).mult(gens[2]);
+            this.circularWords[2][1] = gens[2].mult(gens[1]).mult(gens[2]);
+            this.circularWords[2][2] = gens[1].mult(gens[3]).mult(gens[3]);
+            this.circularWords[2][3] = gens[1].mult(gens[0]).mult(gens[3]).mult(gens[2]);
+
+            this.circularWords[3] = new Array(3);
+            this.circularWords[3][0] = gens[0].mult(gens[1]).mult(gens[2]).mult(gens[3]);
+            this.circularWords[3][1] = gens[0].mult(gens[0]).mult(gens[2]);
+            this.circularWords[3][2] = gens[2].mult(gens[1]).mult(gens[0]).mult(gens[3]);
+        } else {        
+            this.circularWords = new Array(4);
+            this.circularWords[0] = new Array(3);
+            this.circularWords[0][0] = gens[1].mult(gens[2]).mult(gens[3]).mult(gens[0]);
+            this.circularWords[0][1] = gens[0];
+            this.circularWords[0][2] = gens[3].mult(gens[2]).mult(gens[1]).mult(gens[0]);
+
+            this.circularWords[1] = new Array(3);
+            this.circularWords[1][0] = gens[2].mult(gens[3]).mult(gens[0]).mult(gens[1]);
+            this.circularWords[1][1] = gens[1];
+            this.circularWords[1][2] = gens[0].mult(gens[3]).mult(gens[2]).mult(gens[1]);
+
+            this.circularWords[2] = new Array(3);
+            this.circularWords[2][0] = gens[3].mult(gens[0]).mult(gens[1]).mult(gens[2]);
+            this.circularWords[2][1] = gens[2];
+            this.circularWords[2][2] = gens[1].mult(gens[0]).mult(gens[3]).mult(gens[2]);
+
+            this.circularWords[3] = new Array(3);
+            this.circularWords[3][0] = gens[0].mult(gens[1]).mult(gens[2]).mult(gens[3]);
+            this.circularWords[3][1] = gens[3];
+            this.circularWords[3][2] = gens[2].mult(gens[1]).mult(gens[0]).mult(gens[3]);
+        }
 
         this.fixedPoints = [];
         for (const l of this.circularWords) {
@@ -119,23 +150,66 @@ export default class DFSOperator {
             p.push(word[level].apply(fixedPoint));
         }
 
-        if (level === maxLevel ||
-            (Complex.distance(p[2], p[1]) < threshold &&
-             Complex.distance(p[1], p[0]) < threshold)) {
-            //console.log(maxLevel);
-            //            Array.prototype.push.apply(pointList, p);
-            pointList.push(p[0].re, 0, p[0].im,
-                           p[1].re, 0, p[1].im,
-                           p[1].re, 0, p[1].im,
-                           p[2].re, 0, p[2].im);
-            const rgb = Hsv2rgb(pointList.length * 0.00001,1.0, 1.0);
-            this.colorList.push(rgb.x, rgb.y, rgb.z);
-            this.colorList.push(rgb.x, rgb.y, rgb.z);
-            this.colorList.push(rgb.x, rgb.y, rgb.z);
-            this.colorList.push(rgb.x, rgb.y, rgb.z);
+        if(this.is_aaBParabolic) {
+            if(level === maxLevel &&
+               fixedPoints[tags[level]].length === 3 &&
+               (Complex.distance(p[2], p[1]) < threshold &&
+                Complex.distance(p[1], p[0]) < threshold)){
+                pointList.push(p[0].re, 0, p[0].im,
+                               p[1].re, 0, p[1].im,
+                               p[1].re, 0, p[1].im,
+                               p[2].re, 0, p[2].im);
+                const rgb = Hsv2rgb(pointList.length * 0.00001,1.0, 1.0);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
 
-            this.firstTags.push(tags[1], tags[1], tags[1], tags[1]);
-            return true;
+                this.firstTags.push(tags[1], tags[1], tags[1], tags[1]);
+                return true;
+            } else if (level === maxLevel &&
+                       fixedPoints[tags[level]].length === 4 &&
+                       (Complex.distance(p[3], p[2]) < threshold &&
+                        Complex.distance(p[2], p[1]) < threshold &&
+                        Complex.distance(p[1], p[0]) < threshold)) {
+                pointList.push(p[0].re, 0, p[0].im,
+                               p[1].re, 0, p[1].im,
+                               p[1].re, 0, p[1].im,
+                               p[2].re, 0, p[2].im,
+                               p[2].re, 0, p[2].im,
+                               p[3].re, 0, p[3].im);
+                const rgb = Hsv2rgb(pointList.length * 0.00001,1.0, 1.0);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+
+                this.firstTags.push(tags[1], tags[1],
+                                    tags[1], tags[1],
+                                    tags[1], tags[1]);
+                return true;
+            }
+        } else {
+            if (level === maxLevel ||
+                (Complex.distance(p[2], p[1]) < threshold &&
+                 Complex.distance(p[1], p[0]) < threshold)) {
+                //console.log(maxLevel);
+                //            Array.prototype.push.apply(pointList, p);
+                pointList.push(p[0].re, 0, p[0].im,
+                               p[1].re, 0, p[1].im,
+                               p[1].re, 0, p[1].im,
+                               p[2].re, 0, p[2].im);
+                const rgb = Hsv2rgb(pointList.length * 0.00001,1.0, 1.0);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+                this.colorList.push(rgb.x, rgb.y, rgb.z);
+
+                this.firstTags.push(tags[1], tags[1], tags[1], tags[1]);
+                return true;
+            }
         }
         return false;
     }
