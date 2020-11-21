@@ -54,7 +54,7 @@
     <b-input v-model.number="canvasManager.canvas2d.maxLevel"
              @input="valueChanged"
              type="number"
-             min="0" step="1">
+             min="1" step="1">
     </b-input>
   </b-field>
   <b-field>

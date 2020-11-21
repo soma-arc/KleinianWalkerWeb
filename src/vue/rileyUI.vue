@@ -8,6 +8,10 @@
       </button>
       <b-dropdown-item aria-role="listitem"
                        @click="changeToDefault">Default</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToLine">Line</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToFlow">Flow</b-dropdown-item>
     </b-dropdown>
   </b-field>
   <b-field>
@@ -49,6 +53,16 @@
         changeToDefault: function(event){
             this.canvasManager.canvas2d.c.re = 1.13;
             this.canvasManager.canvas2d.c.im = -0.43;
+            this.valueChanged();
+        },
+        changeToLine: function(event) {
+            this.canvasManager.canvas2d.c.re = 2;
+            this.canvasManager.canvas2d.c.im = 0;
+            this.valueChanged();
+        },
+        changeToFlow: function(event) {
+            this.canvasManager.canvas2d.c.re = 1.3;
+            this.canvasManager.canvas2d.c.im = 0.3;
             this.valueChanged();
         }
     }
