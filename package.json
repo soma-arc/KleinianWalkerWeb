@@ -24,6 +24,7 @@
     "babel-loader": "^8.1.0",
     "buefy": "^0.9.3",
     "css-loader": "^5.0.0",
+    "csv-loader": "^3.0.3",
     "eslint": "^7.12.0",
     "eslint-config-vue": "^2.0.2",
     "eslint-plugin-vue": "^7.1.0",

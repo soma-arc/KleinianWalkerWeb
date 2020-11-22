@@ -13,6 +13,7 @@ import { CameraOnSphere } from './3d/camera.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
+const ORBIT_SEED = require('./points.csv');
 
 export default class Canvas2D extends Canvas {
     constructor(canvasId, scene2d) {
@@ -112,6 +113,15 @@ export default class Canvas2D extends Canvas {
         }
         this.circleVbo = CreateStaticVbo(this.gl, this.circlePoints);
         this.circleColorsVbo = CreateStaticVbo(this.gl, this.circleColors);
+        this.orbitSeedPoints = [];
+        this.orbitSeedColors = [];
+        for(const p of ORBIT_SEED) {
+            this.orbitSeedPoints.push(p[0] * 0.0009, 0, p[1] * 0.0009);
+            this.orbitSeedColors.push(255/255, 161/255, 3/255);
+        }
+        this.orbitVbo = CreateStaticVbo(this.gl, this.orbitSeedPoints);
+        this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
+        
         this.render();
     }
 
@@ -313,6 +323,17 @@ export default class Canvas2D extends Canvas {
             gl.drawArrays(gl.LINES, 0, this.points.length/3);
         }
         gl.flush();
+
+        // Render otbit
+        // const tmpM = modelM;
+        // modelM = tmpM.mult(Transform.translate(0.7, 0, 0));
+        // this.mvpM = projectM.mult(viewM).mult(modelM);
+        // this.setUniformValues();
+        // gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitVbo);
+        // gl.vertexAttribPointer(this.vPositionAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+        // gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
+        // gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+        // gl.drawArrays(gl.TRIANGLE_FAN, 0, this.orbitSeedPoints.length/3);
     }
 
     /**

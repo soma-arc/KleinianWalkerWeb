@@ -32,6 +32,14 @@ module.exports = () => ({
                 ]
             },
             {
+                test: /\.csv$/,
+                use: [
+                    {
+                        loader: 'csv-loader'
+                    }
+                ]
+            },
+            {
                 test: /\.(glsl|vert|frag)$/,
                 exclude: /\.(njk|nunjucks)\.(glsl|vert|frag)$/,
                 use: [
