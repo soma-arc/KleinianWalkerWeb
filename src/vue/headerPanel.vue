@@ -34,10 +34,10 @@ export default {
                 "jt_b": [c.jt_b.re, c.jt_a.im],
                 "jisT_abPlus": c.jisT_abPlus,
                 "z0": [c.z0.re, c.z0.i, c.z0.j, c.z0.k],
-                "thataA": c.thetaA,
-                "thataB": c.thetaB,
-                "c": c.c,
-                "origin": c.origin,
+                "thetaA": c.thetaA,
+                "thetaB": c.thetaB,
+                "c": [c.c.re, c.c.im],
+                "origin": [c.origin.re, c.origin.im],
                 "a1": [c.a1.re, c.a1.im],
                 "a2": [c.a2.re, c.a2.im],
                 "showControlPoints": c.showControlPoints,
@@ -60,7 +60,8 @@ export default {
         load: function() {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
-                JSON.parse(reader.result);
+                const json = JSON.parse(reader.result);
+                this.canvasManager.canvas2d.load(json);
             });
             const a = document.createElement('input');
             a.type = 'file';

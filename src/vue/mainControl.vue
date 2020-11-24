@@ -6,12 +6,12 @@
       @change="recipeChanged"
       :scrollable="isScrollable"
       :max-height="maxHeight"
-      v-model="currentMenu"
+      v-model="canvasManager.canvas2d.recipeName"
       aria-role="list"
       >
       <button class="button is-primary" type="button" slot="trigger">
         <template>
-          <span>{{currentMenu.text}}</span>
+          <span>{{ canvasManager.canvas2d.recipeName }}</span>
         </template>
         <b-icon icon="menu-down"></b-icon>
       </button>
@@ -22,28 +22,28 @@
         :value="menu" aria-role="listitem">
         <div class="media">
           <div class="media-content">
-            <h3>{{menu.text}}</h3>
+            <h3>{{menu}}</h3>
           </div>
         </div>
       </b-dropdown-item>
     </b-dropdown>
   </b-field>
-  <div v-show="recipeName === 'GrandmaRecipe'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'GrandmaRecipe'">
     <grandma-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'JorgensenRecipe'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'JorgensenRecipe'">
     <jorgensen-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'RileyRecipe'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'RileyRecipe'">
     <riley-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'OncePuncturedTorus'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'OncePuncturedTorus'">
     <opt-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'SakugawaRecipe'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'SakugawaRecipe'">
     <sakugawa-ui :canvasManager="canvasManager"/>
   </div>
-  <div v-show="recipeName === 'GrandmaSpecialtiesRecipe'">
+  <div v-show="canvasManager.canvas2d.recipeName === 'GrandmaSpecialtiesRecipe'">
     <sakugawa-ui :canvasManager="canvasManager"/>
   </div>
   <b-field>
@@ -99,13 +99,13 @@ export default {
             limitSetColors: {
                 rgba: { r: 255, g: 0, b: 0, a: 1 },
             },
-            currentMenu: { text: 'GrandmaRecipe' },
+            currentMenu: this.canvasManager.canvas2d.recipeName,
             menus: [
-                { text: 'GrandmaRecipe'},
-                { text: 'JorgensenRecipe'},
-                { text: 'RileyRecipe'},
-                { text: 'OncePuncturedTorus'},
-                { text: 'SakugawaRecipe'},
+                'GrandmaRecipe',
+                 'JorgensenRecipe',
+                 'RileyRecipe',
+                 'OncePuncturedTorus',
+                'SakugawaRecipe',
 //                { text: 'GrandmaSpecialtiesRecipe'}
             ],
             recipeName: "GrandmaRecipe"
@@ -129,9 +129,8 @@ export default {
             this.canvasManager.canvas2d.render();
         },
         recipeChanged: function(event) {
-            this.recipeName = event.text;
-            this.canvasManager.canvas2d.recipeName = event.text;
-            //this.canvasManager.changeRecipe(event.text);
+            this.recipeName = event;
+            this.canvasManager.canvas2d.recipeName = event;
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         }

@@ -125,6 +125,47 @@ export default class Canvas2D extends Canvas {
         this.render();
     }
 
+    load(json) {
+        console.log(json);
+        this.recipeName = json.recipeName;
+        this.maxLevel = json.maxLevel;
+        this.threshold = json.threshold;
+        this.t_a.re = json.t_a[0];
+        this.t_a.im = json.t_a[1];
+        this.t_b.re = json.t_b[0];
+        this.t_b.im = json.t_b[1];
+        this.isT_abPlus = json.isT_abPlus;
+        this.jt_a.re = json.jt_a[0];
+        this.jt_a.im = json.jt_a[1];
+        this.jisT_abPlus = json.jisT_abPlus;
+        this.z0.re = json.z0[0];
+        this.z0.i = json.z0[1];
+        this.z0.j = json.z0[2];
+        this.z0.k = json.z0[3];
+        this.thetaA = json.thetaA;
+        this.thetaB = json.thetaB;
+        this.c.re = json.c[0];
+        this.c.im = json.c[1];
+        this.origin.re = json.origin[0];
+        this.origin.im = json.origin[1];
+        this.a1.re = json.a1[0];
+        this.a1.im = json.a1[1];
+        this.a2.re = json.a2[0];
+        this.a2.im = json.a2[1];
+        this.showControlPoints = json.showControlPoints;
+        this.backgroundColor = json.backgroundColor;
+        this.limitSetColor = json.limitSetColor;
+        this.coloringMode = json.coloringMode;
+        this.initialHue = json.initialHue;
+        this.hueStep = json.hueStep;
+        this.generatorColors = json.generatorColors;
+        this.rotation = json.rotation;
+
+        this.changeLimitSetColor();
+        this.preparePoints();
+        this.render();
+    }
+
     compileRenderShader() {
         this.renderProgram = this.gl.createProgram();
         AttachShader(this.gl, RENDER_VERT,
