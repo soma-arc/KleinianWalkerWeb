@@ -342,7 +342,7 @@ export default class Canvas2D extends Canvas {
             }
             gl.flush();
             if(this.showControlPoints) {
-                modelM = tmpM.mult(Transform.translate(this.a1.re, 0, this.a1.im));
+                modelM = Transform.translate(this.a1.re, 0, this.a1.im);
                 this.mvpM = projectM.mult(viewM).mult(modelM);
                 this.setUniformValues();
                 gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleVbo);
@@ -351,7 +351,7 @@ export default class Canvas2D extends Canvas {
                 gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
                 gl.drawArrays(gl.LINE_LOOP, 0, this.circlePoints.length/3);
 
-                modelM = tmpM.mult(Transform.translate(this.a2.re, 0, this.a2.im));
+                modelM = Transform.translate(this.a2.re, 0, this.a2.im);
                 this.mvpM = projectM.mult(viewM).mult(modelM);
                 this.setUniformValues();
                 gl.bindBuffer(this.gl.ARRAY_BUFFER, this.circleVbo);
