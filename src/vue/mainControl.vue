@@ -29,22 +29,22 @@
     </b-dropdown>
   </b-field>
   <div v-show="canvasManager.canvas2d.recipeName === 'GrandmaRecipe'">
-    <grandma-ui :canvasManager="canvasManager"/>
+    <grandma-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <div v-show="canvasManager.canvas2d.recipeName === 'JorgensenRecipe'">
-    <jorgensen-ui :canvasManager="canvasManager"/>
+    <jorgensen-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <div v-show="canvasManager.canvas2d.recipeName === 'RileyRecipe'">
-    <riley-ui :canvasManager="canvasManager"/>
+    <riley-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <div v-show="canvasManager.canvas2d.recipeName === 'OncePuncturedTorus'">
-    <opt-ui :canvasManager="canvasManager"/>
+    <opt-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <div v-show="canvasManager.canvas2d.recipeName === 'SakugawaRecipe'">
-    <sakugawa-ui :canvasManager="canvasManager"/>
+    <sakugawa-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <div v-show="canvasManager.canvas2d.recipeName === 'GrandmaSpecialtiesRecipe'">
-    <sakugawa-ui :canvasManager="canvasManager"/>
+    <sakugawa-ui :canvasManager="canvasManager" :autoRecalc="autoRecalc"/>
   </div>
   <b-field>
     Rotation
@@ -67,6 +67,16 @@
              type="number"
              min="0" step="0.001">
     </b-input>
+  </b-field>
+  <b-field>
+    <b-checkbox v-model="autoRecalc">
+      Auto Recalculate
+    </b-checkbox>
+  </b-field>
+  <b-field>
+    <b-button type="is-primary" @click="calcAndRender">
+      Calculate
+    </b-button>
   </b-field>
 </div>
 </template>
@@ -108,11 +118,13 @@ export default {
                 'SakugawaRecipe',
 //                { text: 'GrandmaSpecialtiesRecipe'}
             ],
-            recipeName: "GrandmaRecipe"
+            recipeName: "GrandmaRecipe",
+            autoRecalc: false
         }
     },
     methods: {
         valueChanged: function(event) {
+            if(this.autoRecalc === false) return;
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
@@ -131,6 +143,10 @@ export default {
         recipeChanged: function(event) {
             this.recipeName = event;
             this.canvasManager.canvas2d.recipeName = event;
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
+        calcAndRender: function(event) {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         }

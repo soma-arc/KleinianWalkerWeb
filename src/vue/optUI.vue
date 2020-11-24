@@ -57,13 +57,14 @@ import Complex from '../2d/complex.js';
 export default {
     components: {
     },
-    props: ['canvasManager'],
+    props: ['canvasManager', 'autoRecalc'],
     data: function () {
         return {
         }
     },
     methods: {
         valueChanged: function(event) {
+            if (this.autoRecalc === false) return;
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },

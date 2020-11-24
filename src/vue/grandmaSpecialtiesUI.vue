@@ -66,7 +66,7 @@
   export default {
     components: {
     },
-    props: ['canvasManager'],
+    props: ['canvasManager', 'autoRecalc'],
     data: function () {
         return {
             currentParameter: { text: 'default'},
@@ -77,6 +77,7 @@
     },
     methods: {
         valueChanged: function(event) {
+            if(this.autoRecalc === false) return;
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
