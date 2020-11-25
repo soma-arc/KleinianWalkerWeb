@@ -78,6 +78,12 @@
       Calculate
     </b-button>
   </b-field>
+  <b-field>
+    <b-checkbox v-model="canvasManager.canvas2d.showOrbit"
+                @input="render">
+      Show orbit
+    </b-checkbox>
+  </b-field>
 </div>
 </template>
 
@@ -148,6 +154,9 @@ export default {
         },
         calcAndRender: function(event) {
             this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
+        render: function(event) {
             this.canvasManager.canvas2d.render();
         }
     }

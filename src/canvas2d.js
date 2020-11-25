@@ -88,6 +88,12 @@ export default class Canvas2D extends Canvas {
         this.rotation = 0;
 
         this.recipeName = 'GrandmaRecipe';
+
+        this.orbitTranslation = new Vec2(0., 0);
+        //this.orbitTranslation = new Vec2(0.0, 0);
+        this.showOrbit = true;
+        this.orbitMouseDiff = new Vec2(0, 0);
+        this.draggingOrbitSeed = false;
     }
 
     init() {
@@ -115,13 +121,29 @@ export default class Canvas2D extends Canvas {
         this.circleColorsVbo = CreateStaticVbo(this.gl, this.circleColors);
         this.orbitSeedPoints = [];
         this.orbitSeedColors = [];
+        this.orbitScale = 0.0009;
+        let maxX = Number.MIN_VALUE;
+        let maxY = Number.MIN_VALUE;
+        let minX = Number.MAX_VALUE;
+        let minY = Number.MAX_VALUE;
         for(const p of ORBIT_SEED) {
-            this.orbitSeedPoints.push(p[0] * 0.0009, 0, p[1] * 0.0009);
+            const x = p[0] * this.orbitScale;
+            const y = p[1] * this.orbitScale;
+            if(x > maxX) maxX = x;
+            if(y > maxY) maxY = y;
+            if(x < minX) minX = x;
+            if(y < minY) minY = y;
+            this.orbitSeedPoints.push(x, 0, y);
             this.orbitSeedColors.push(255/255, 161/255, 3/255);
         }
+        console.log(`(${minX}, ${minY}) - (${maxX}, ${maxY})`);
+        this.orbitSeedMin = new Vec2(minX, minY);
+        this.orbitSeedMax = new Vec2(maxX, maxY);
+        this.orbitWidth = maxX - minX;
+        this.orbitHeight = maxY - minY;
         this.orbitVbo = CreateStaticVbo(this.gl, this.orbitSeedPoints);
         this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
-        
+        this.orbitGens;
         this.render();
     }
 
@@ -189,11 +211,11 @@ export default class Canvas2D extends Canvas {
 
     preparePoints() {
         if(this.recipeName === 'GrandmaRecipe') {
-            [this.points, this.colors, this.firstTags] =
+            [this.points, this.colors, this.firstTags, this.orbitGens] =
                 this.scene2d.computeGrandmaLimitSet(this.t_a, this.t_b, this.isT_abPlus,
                                                     this.maxLevel, this.threshold);
         } else if (this.recipeName === 'JorgensenRecipe'){
-            [this.points, this.colors, this.firstTags] =
+            [this.points, this.colors, this.firstTags, this.orbitGens] =
                 this.scene2d.computeJorgensenLimitSet(this.jt_a, this.jt_b, this.jisT_abPlus,
                                                     this.maxLevel, this.threshold);
         } else if (this.recipeName === 'SakugawaRecipe') {
@@ -201,19 +223,19 @@ export default class Canvas2D extends Canvas {
                 this.scene3d.computeSakugawaLimitSet(this.z0, this.thetaA, this.thetaB,
                                                      this.maxLevel, this.threshold);
         } else if (this.recipeName === 'RileyRecipe') {
-            [this.points, this.colors, this.firstTags] =
+            [this.points, this.colors, this.firstTags, this.orbitGens] =
                 this.scene2d.computeRileyLimitSet(this.c,
                                                   this.maxLevel,
                                                   this.threshold);
         } else if (this.recipeName === 'OncePuncturedTorus'){
-            [this.points, this.colors, this.firstTags] =
+            [this.points, this.colors, this.firstTags, this.orbitGens] =
                 this.scene2d.computeOPTLimitSet(this.a1,
                                                 this.a2,
                                                 this.origin,
                                                 this.maxLevel,
                                                 this.threshold);
         } else if (this.recipeName === 'GrandmaSpecialtiesRecipe') {
-            [this.points, this.colors, this.firstTags] =
+            [this.points, this.colors, this.firstTags, this.orbitGens] =
                 this.scene2d.computeGrandmaSpecialtiesLimitSet(this.specialties_a,
                                                                this.specialties_b,
                                                                this.specialties_ab,
@@ -238,6 +260,23 @@ export default class Canvas2D extends Canvas {
             }
         }
         this.colorsVbo = CreateStaticVbo(this.gl, this.colors);
+
+        // if(this.recipeName !== 'sakuagwaRecipe') {
+        //     this.maxOrbitLevel = 3;
+        //     this.orbitPoints = [ORBIT_SEED];
+        //     for (let level = 0; level < this.maxOrbitLevel; level++) {
+        //         const levelXPointsList = [];
+        //         for(const p of levelXPointsList[level - 1]) {
+        //             const orbitPoints = [];
+        //             for(const g of this.orbitGens){
+        //                 const c = new Complex(p[0] * this.orbitScale,
+        //                                       p[1] * this.orbitScale);
+        //                 orbitPoints.push(g.apply(c));
+        //             }
+        //             levelXPointsList.push(orbitPoints);
+        //         }
+        //     }
+        // }
     }
 
     changeLimitSetColor() {
@@ -366,15 +405,21 @@ export default class Canvas2D extends Canvas {
         gl.flush();
 
         // Render otbit
-        // const tmpM = modelM;
-        // modelM = tmpM.mult(Transform.translate(0.7, 0, 0));
-        // this.mvpM = projectM.mult(viewM).mult(modelM);
-        // this.setUniformValues();
-        // gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitVbo);
-        // gl.vertexAttribPointer(this.vPositionAttrib, attStride, this.gl.FLOAT, false, 0, 0);
-        // gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
-        // gl.vertexAttribPointer(this.vColorAttrib, attStride, this.gl.FLOAT, false, 0, 0);
-        // gl.drawArrays(gl.TRIANGLE_FAN, 0, this.orbitSeedPoints.length/3);
+        if(this.showOrbit === false &&
+           this.recipeName === 'SakugawaRecipe') return;
+        const tmpM = modelM;
+        modelM = tmpM.mult(Transform.translate(this.orbitTranslation.x,
+                                               0,
+                                               this.orbitTranslation.y));
+        this.mvpM = projectM.mult(viewM).mult(modelM);
+        this.setUniformValues();
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitVbo);
+        gl.vertexAttribPointer(this.vPositionAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
+        gl.vertexAttribPointer(this.vColorAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, this.orbitSeedPoints.length/3);
     }
 
     /**
@@ -463,6 +508,18 @@ export default class Canvas2D extends Canvas {
         this.mouseState.prevPosition = mouse;
         this.mouseState.prevTranslate = this.translate;
         this.mouseState.isPressing = true;
+        console.log(`mouse${mouse.x}, ${mouse.y}`);
+        if(this.orbitTranslation.x + this.orbitSeedMin.x < mouse.x &&
+           mouse.x < this.orbitTranslation.x + this.orbitSeedMax.x &&
+           this.orbitTranslation.y + this.orbitSeedMin.y < mouse.y &&
+           mouse.y < this.orbitTranslation.y + this.orbitSeedMax.y) {
+            console.log('click');
+            this.orbitMouseDiff = new Vec2(mouse.x - this.orbitSeedMin.x - this.orbitTranslation.x,
+                                           mouse.y - this.orbitSeedMin.y - this.orbitTranslation.y);
+            console.log(`diff ${this.orbitMouseDiff.x}, ${this.orbitMouseDiff.y}`);
+            this.prevOrbitTranslation = this.orbitTranslation;
+            this.draggingOrbitSeed = true;
+        }
     }
 
     mouseMoveListener(event) {
@@ -507,12 +564,22 @@ export default class Canvas2D extends Canvas {
                 this.render();
             }
         }
+
+        if(this.draggingOrbitSeed) {
+            const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
+            const wh = new Vec2(this.orbitWidth, this.orbitHeight).scale(0.5);
+            this.orbitTranslation = mouse.sub(wh);
+            //console.log(`orb ${this.orbitTranslation.x}, ${this.orbitTranslation.y}`);
+
+            this.render();
+        }
     }
     
     mouseUpListener(event) {
         this.mouseCameraState.isPressing = false;
         this.mouseState.isPressing = false;
         this.mouseState.button = -1;
+        this.draggingOrbitSeed = false;
     }
 
     save() {

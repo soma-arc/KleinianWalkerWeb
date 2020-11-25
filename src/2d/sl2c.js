@@ -50,7 +50,7 @@ export default class SL2C {
     /**
      *
      * @param {Complex} c
-     * @returns {SL2C}
+     * @returns {Complex}
      */
     apply (c) {
         if (c.isInfinity()) {

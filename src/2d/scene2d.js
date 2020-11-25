@@ -14,34 +14,39 @@ export default class Scene2d {
         const grandmaRecipe = new GrandmaRecipe(t_a, t_b, isT_abPlus);
         const dfs = new DFSOperator(grandmaRecipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+        return [dfs.pointList, dfs.colorList,
+                dfs.firstTags, grandmaRecipe.gens];
     }
     
     computeJorgensenLimitSet(t_a, t_b, isT_abPlus, maxLevel, threshold) {
         const jorgensenRecipe = new JorgensenRecipe(t_a, t_b, isT_abPlus);
         const dfs = new DFSOperator(jorgensenRecipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+        return [dfs.pointList, dfs.colorList,
+                dfs.firstTags, jorgensenRecipe.gens];
     }
 
     computeRileyLimitSet(c, maxLevel, threshold) {
         const rileyRecipe = new RileyRecipe(c);
         const dfs = new DFSOperator(rileyRecipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+        return [dfs.pointList, dfs.colorList,
+                dfs.firstTags, rileyRecipe.gens];
     }
 
     computeOPTLimitSet(a1, a2, origin, maxLevel, threshold) {
         const recipe = new OPTRecipe(a1, a2, origin);
         const dfs = new OPTDFSOperator(recipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+        return [dfs.pointList, dfs.colorList,
+                dfs.firstTags, recipe.gens];
     }
 
     computeGrandmaSpecialtiesLimitSet(t_a, t_b, t_ab, isR_plus, maxLevel, threshold) {
         const recipe = new GrandmaSpecialtiesRecipe(t_a, t_b, t_ab, isR_plus);
         const dfs = new DFSOperator(recipe.gens);
         dfs.search(maxLevel, threshold);
-        return [dfs.pointList, dfs.colorList, dfs.firstTags];
+        return [dfs.pointList, dfs.colorList,
+                dfs.firstTags, recipe.gens];
     }
 }
