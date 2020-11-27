@@ -96,6 +96,10 @@ export default class Canvas2D extends Canvas {
         this.orbitMouseDiff = new Vec2(0, 0);
         this.draggingOrbitSeed = false;
         this.pointSeriesMaxLevel = 5;
+        this.showFrame = false;
+        this.orbitColor = {
+            rgba: { r:255, g: 161, b: 3, a: 1 },
+        };
     }
 
     init() {
@@ -128,20 +132,16 @@ export default class Canvas2D extends Canvas {
     }
 
     computeOrbits() {
-        this.orbitSeedColors = [];
         this.orbitScale = 0.0009;
         const points = [];
         for(const p of ORBIT_SEED) {
             const x = p[0] * this.orbitScale + this.orbitTranslation.x;
             const y = p[1] * this.orbitScale + this.orbitTranslation.y;
             points.push(new Complex(x, y));
-            this.orbitSeedColors.push(255/255, 161/255, 3/255);
         }
         this.pointSeries = new PointSeries(points, this.orbitScale, this.orbitGens, this.threshold);
         this.transformedFigures = PointSeries.RunBFS(this.pointSeriesMaxLevel,
                                                      this.pointSeries);
-
-        this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
     }
 
     load(json) {
@@ -382,6 +382,14 @@ export default class Canvas2D extends Canvas {
         // Render otbit
         if(this.showOrbit === false ||
            this.recipeName === 'SakugawaRecipe') return;
+        this.orbitSeedColors = [];
+        for(const p of ORBIT_SEED) {
+            this.orbitSeedColors.push(this.orbitColor.rgba.r/255,
+                                      this.orbitColor.rgba.g/255,
+                                      this.orbitColor.rgba.b/255);
+        }
+        console.log(this.orbitColor);
+        this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
         for(const figure of this.transformedFigures) {
             const orbitPoints = [];
             for(const p of figure.points) {
@@ -390,9 +398,7 @@ export default class Canvas2D extends Canvas {
             const orbitVbo = CreateStaticVbo(gl, orbitPoints);
             
             const tmpM = tmpOrbitM;
-            modelM = tmpM.mult(Transform.translate(0,
-                                                   0,
-                                                   0));
+            modelM = tmpM;
             this.mvpM = projectM.mult(viewM).mult(modelM);
             this.setUniformValues();
             gl.bindBuffer(this.gl.ARRAY_BUFFER, orbitVbo);
@@ -403,6 +409,25 @@ export default class Canvas2D extends Canvas {
                                    this.gl.FLOAT, false, 0, 0);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, orbitPoints.length/3);
         }
+
+        if(this.showFrame === false) return;
+        const framePoints = [];
+        framePoints.push(this.pointSeries.orbitSeedMin.x, 0,
+                         this.pointSeries.orbitSeedMin.y);
+        framePoints.push(this.pointSeries.orbitSeedMin.x, 0,
+                         this.pointSeries.orbitSeedMax.y);
+        framePoints.push(this.pointSeries.orbitSeedMax.x, 0,
+                         this.pointSeries.orbitSeedMax.y);
+        framePoints.push(this.pointSeries.orbitSeedMax.x, 0,
+                         this.pointSeries.orbitSeedMin.y);
+        const frameVbo = CreateStaticVbo(gl, framePoints);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, frameVbo);
+        gl.vertexAttribPointer(this.vPositionAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
+        gl.vertexAttribPointer(this.vColorAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.LINE_LOOP, 0, framePoints.length/3);
     }
 
     /**
@@ -491,15 +516,15 @@ export default class Canvas2D extends Canvas {
         this.mouseState.prevPosition = mouse;
         this.mouseState.prevTranslate = this.translate;
         this.mouseState.isPressing = true;
-        console.log(`mouse${mouse.x}, ${mouse.y}`);
+        //console.log(`mouse${mouse.x}, ${mouse.y}`);
         if(this.pointSeries.orbitSeedMin.x < mouse.x &&
            mouse.x <  this.pointSeries.orbitSeedMax.x &&
            this.pointSeries.orbitSeedMin.y < mouse.y &&
            mouse.y <  this.pointSeries.orbitSeedMax.y) {
-            console.log('click');
+            //console.log('click');
             this.orbitMouseDiff = new Vec2(mouse.x - this.pointSeries.orbitSeedMin.x - this.orbitTranslation.x,
                                            mouse.y - this.pointSeries.orbitSeedMin.y - this.orbitTranslation.y);
-            console.log(`diff ${this.orbitMouseDiff.x}, ${this.orbitMouseDiff.y}`);
+            //console.log(`diff ${this.orbitMouseDiff.x}, ${this.orbitMouseDiff.y}`);
             this.prevOrbitTranslation = this.orbitTranslation;
             this.draggingOrbitSeed = true;
         }

@@ -15,8 +15,8 @@ export default class PointSeries {
     }
 
     calcBounds() {
-        let maxX = Number.MIN_VALUE;
-        let maxY = Number.MIN_VALUE;
+        let maxX = -Number.MAX_VALUE;
+        let maxY = -Number.MAX_VALUE;
         let minX = Number.MAX_VALUE;
         let minY = Number.MAX_VALUE;
         this.orbitSeedPoints = [];

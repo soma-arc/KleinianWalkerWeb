@@ -10,7 +10,7 @@
     <!-- <b-tab-item label="Others"> -->
     <!--   <others-control :canvasManager="canvasManager"/> -->
     <!-- </b-tab-item> -->
-  </b-tabs>  
+  </b-tabs>
 </div>
 </template>
 
