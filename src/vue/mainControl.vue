@@ -63,7 +63,7 @@
   <b-field>
     Threshold
     <b-input v-model.number="canvasManager.canvas2d.threshold"
-             @input="valueChanged"
+             @input="changeThreshold"
              type="number"
              min="0" step="0.001">
     </b-input>
@@ -80,9 +80,17 @@
   </b-field>
   <b-field>
     <b-checkbox v-model="canvasManager.canvas2d.showOrbit"
-                @input="render">
+                @input="computeOrbits">
       Show orbit
     </b-checkbox>
+  </b-field>
+    <b-field>
+      Step Level
+    <b-input v-model.number="canvasManager.canvas2d.pointSeriesMaxLevel"
+             @input="computeOrbits"
+             type="number"
+             min="0" step="1">
+    </b-input>
   </b-field>
 </div>
 </template>
@@ -157,6 +165,16 @@ export default {
             this.canvasManager.canvas2d.render();
         },
         render: function(event) {
+            this.canvasManager.canvas2d.render();
+        },
+        computeOrbits: function(evemt) {
+            this.canvasManager.canvas2d.computeOrbits();
+            this.canvasManager.canvas2d.render();
+        },
+        changeThreshold: function(event) {
+            if(this.canvasManager.canvas2d.showOrbit)
+                this.canvasManager.canvas2d.computeOrbits();
+            this.canvasManager.canvas2d.preparePoints()
             this.canvasManager.canvas2d.render();
         }
     }

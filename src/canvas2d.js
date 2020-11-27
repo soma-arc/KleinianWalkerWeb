@@ -95,6 +95,7 @@ export default class Canvas2D extends Canvas {
         this.showOrbit = true;
         this.orbitMouseDiff = new Vec2(0, 0);
         this.draggingOrbitSeed = false;
+        this.pointSeriesMaxLevel = 5;
     }
 
     init() {
@@ -122,7 +123,7 @@ export default class Canvas2D extends Canvas {
         this.circleVbo = CreateStaticVbo(this.gl, this.circlePoints);
         this.circleColorsVbo = CreateStaticVbo(this.gl, this.circleColors);
 
-        this.computeOrbits();
+        if(this.showOrbit) this.computeOrbits();
         this.render();
     }
 
@@ -136,9 +137,9 @@ export default class Canvas2D extends Canvas {
             points.push(new Complex(x, y));
             this.orbitSeedColors.push(255/255, 161/255, 3/255);
         }
-        this.pointSeries = new PointSeries(points, this.orbitScale, this.orbitGens);
-        const pSeriesMaxLevel = 5;
-        this.transformedFigures = PointSeries.RunBFS(pSeriesMaxLevel, this.pointSeries);
+        this.pointSeries = new PointSeries(points, this.orbitScale, this.orbitGens, this.threshold);
+        this.transformedFigures = PointSeries.RunBFS(this.pointSeriesMaxLevel,
+                                                     this.pointSeries);
 
         this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
     }
