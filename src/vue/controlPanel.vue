@@ -7,9 +7,9 @@
     <b-tab-item label="Coloring">
       <coloring-control :canvasManager="canvasManager"/>
     </b-tab-item>
-    <b-tab-item label="Others">
-      <others-control :canvasManager="canvasManager"/>
-    </b-tab-item>
+    <!-- <b-tab-item label="Others"> -->
+    <!--   <others-control :canvasManager="canvasManager"/> -->
+    <!-- </b-tab-item> -->
   </b-tabs>  
 </div>
 </template>

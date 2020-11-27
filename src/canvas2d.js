@@ -69,7 +69,7 @@ export default class Canvas2D extends Canvas {
         this.specialties_ab = new Complex(0, 0);
         this.specialties_R_plus = true;
         
-        this.maxLevel = 15;
+        this.maxLevel = 30;
         this.threshold = 0.005;
 
         this.backgroundColor = {
@@ -92,7 +92,7 @@ export default class Canvas2D extends Canvas {
 
         this.orbitTranslation = new Vec2(0.5, 0);
         //this.orbitTranslation = new Vec2(0.0, 0);
-        this.showOrbit = true;
+        this.showOrbit = false;
         this.orbitMouseDiff = new Vec2(0, 0);
         this.draggingOrbitSeed = false;
         this.pointSeriesMaxLevel = 5;

@@ -84,8 +84,8 @@
       Show orbit
     </b-checkbox>
   </b-field>
-    <b-field>
-      Step Level
+  <b-field>
+    Step Level
     <b-input v-model.number="canvasManager.canvas2d.pointSeriesMaxLevel"
              @input="computeOrbits"
              type="number"
