@@ -45,7 +45,8 @@
                 @input="changeLimitSetColor"
                 placeholder="Number"
                 type="number"
-                step="0.00001"></b-input>
+                step="0.000001"
+                min="0"></b-input>
     </b-field>
   </div>
   <div v-show="canvasManager.canvas2d.coloringMode === 'FirstGenerator'">

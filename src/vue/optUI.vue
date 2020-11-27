@@ -44,7 +44,7 @@
   </b-field>
   <b-field>
     <b-checkbox v-model="canvasManager.canvas2d.showControlPoints"
-                @input="valueChanged">
+                @input="render">
       Show Control Points
     </b-checkbox>
   </b-field>
@@ -63,6 +63,9 @@ export default {
         }
     },
     methods: {
+        render: function(event) {
+            this.canvasManager.canvas2d.render();
+        },
         valueChanged: function(event) {
             if (this.autoRecalc === false) return;
             this.canvasManager.canvas2d.preparePoints();

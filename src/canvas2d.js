@@ -57,7 +57,7 @@ export default class Canvas2D extends Canvas {
         // Riley Recipe
         this.c = new Complex(1.13, -0.43);
 
-        // OPT Recope
+        // OPT Recipe
         this.origin = Complex.ZERO;
         this.a1 = new Complex(0.49, 0.15);
         this.a2 = new Complex(0.25, 0.41);
@@ -98,7 +98,7 @@ export default class Canvas2D extends Canvas {
         this.pointSeriesMaxLevel = 5;
         this.showFrame = false;
         this.orbitColor = {
-            rgba: { r:255, g: 161, b: 3, a: 1 },
+            rgba: { r:255, g: 161, b: 3, a: 1 }
         };
     }
 
@@ -179,9 +179,16 @@ export default class Canvas2D extends Canvas {
         this.hueStep = json.hueStep;
         this.generatorColors = json.generatorColors;
         this.rotation = json.rotation;
+        this.orbitColor = json.orbitColor;
+        this.showOrbit = json.showOrbit;
+        this.showFrame = json.showFrame;
+        this.orbitTranslation.x = json.orbitTranslation[0];
+        this.orbitTranslation.y = json.orbitTranslation[1];
+        this.pointSeriesMaxLevel = json.pointSeriesMaxLevel;
 
         this.changeLimitSetColor();
         this.preparePoints();
+        this.computeOrbits();
         this.render();
     }
 
@@ -388,7 +395,7 @@ export default class Canvas2D extends Canvas {
                                       this.orbitColor.rgba.g/255,
                                       this.orbitColor.rgba.b/255);
         }
-        console.log(this.orbitColor);
+        //console.log(this.orbitColor);
         this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
         for(const figure of this.transformedFigures) {
             const orbitPoints = [];

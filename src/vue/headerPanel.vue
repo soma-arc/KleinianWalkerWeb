@@ -47,7 +47,12 @@ export default {
                 "initialHue": c.initialHue,
                 "hueStep": c.hueStep,
                 "generatorColors": c.generatorColors,
-                "rotation": c.rotation
+                "rotation": c.rotation,
+                "orbitColor": c.orbitColor,
+                "showOrbit": c.showOrbit,
+                "showFrame": c.showFrame,
+                "orbitTranslation": [c.orbitTranslation.x, c.orbitTranslation.y],
+                "pointSeriesMaxLevel": c.pointSeriesMaxLevel
             }
             const blob = new Blob([JSON.stringify(data,
                                                   null, '    ')],

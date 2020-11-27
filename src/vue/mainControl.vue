@@ -70,7 +70,7 @@
   </b-field>
   <b-field>
     <b-checkbox v-model="autoRecalc">
-      Auto Recalculate
+      Auto Recalculation
     </b-checkbox>
   </b-field>
   <b-field>
