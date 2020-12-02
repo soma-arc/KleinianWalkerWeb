@@ -15,7 +15,8 @@ import PointSeries from './pointSeries.js';
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
 //const ORBIT_SEED = require('./points.csv');
-const ORBIT_SEED = require('./sakura.csv');
+//const ORBIT_SEED = require('./sakura.csv');
+const ORBIT_SEED = require('./snowFlake.csv');
 
 export default class Canvas2D extends Canvas {
     constructor(canvasId, scene2d) {
@@ -133,7 +134,8 @@ export default class Canvas2D extends Canvas {
     }
 
     computeOrbits() {
-        this.orbitScale = 0.009;
+        //this.orbitScale = 0.009;
+        this.orbitScale = 0.02;
         const points = [];
         for(const p of ORBIT_SEED) {
             const x = p[0] * this.orbitScale + this.orbitTranslation.x;
