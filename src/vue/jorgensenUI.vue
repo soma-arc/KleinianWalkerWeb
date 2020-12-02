@@ -8,6 +8,8 @@
       </button>
       <b-dropdown-item aria-role="listitem"
                        @click="changeToDefault">Default</b-dropdown-item>
+      <b-dropdown-item aria-role="listitem"
+                       @click="changeToWheel">Wheel</b-dropdown-item>
     </b-dropdown>
   </b-field>
   <b-field>
@@ -50,7 +52,7 @@
 </template>
 
 <script>
-  export default {
+export default {
     components: {
     },
     props: ['canvasManager', 'autoRecalc'],
@@ -68,13 +70,36 @@
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToDefault: function(event){
             this.canvasManager.canvas2d.jt_a.re = 1.87;
             this.canvasManager.canvas2d.jt_a.im = 0.1;
             this.canvasManager.canvas2d.jt_b.re = 1.87;
             this.canvasManager.canvas2d.jt_b.im = -0.1;
             this.canvasManager.canvas2d.jisT_abPlus = false;
-            this.valueChanged();
+            this.canvasManager.canvas2d.maxLevel = 30;
+            this.renderPreset();
+        },
+        changeToWheel: function(event){
+            this.canvasManager.canvas2d.jt_a.re = 2.0;
+            this.canvasManager.canvas2d.jt_a.im = 0.0;
+            this.canvasManager.canvas2d.jt_b.re = 1.85;
+            this.canvasManager.canvas2d.jt_b.im = -0.1;
+            this.canvasManager.canvas2d.jisT_abPlus = true;
+            this.canvasManager.canvas2d.maxLevel = 30;
+            this.renderPreset();
+        },
+        changeToCycles: function(event) {
+            this.canvasManager.canvas2d.jt_a.re = 2.2;
+            this.canvasManager.canvas2d.jt_a.im = 0.0;
+            this.canvasManager.canvas2d.jt_b.re = 1.85;
+            this.canvasManager.canvas2d.jt_b.im = -0.1;
+            this.canvasManager.canvas2d.jisT_abPlus = false;
+            this.canvasManager.canvas2d.maxLevel = 30;
+            this.renderPreset();
         }
     }
 }

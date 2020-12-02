@@ -81,6 +81,10 @@
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToDefault: function(event){
             this.canvasManager.canvas2d.specialties_a.re = 0;
             this.canvasManager.canvas2d.specialties_a.im = 0;
@@ -89,7 +93,7 @@
             this.canvasManager.canvas2d.specialties_ab.re = 0;
             this.canvasManager.canvas2d.specialties_ab.im = 0;
             this.canvasManager.canvas2d.specialties_R_plus = true;
-            this.valueChanged();
+            this.renderPreset();
         },
     }
   }

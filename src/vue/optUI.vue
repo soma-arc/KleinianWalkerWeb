@@ -71,14 +71,18 @@ export default {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToParam1: function(event) {
             this.canvasManager.canvas2d.a1.re = 0.25;
             this.canvasManager.canvas2d.a1.im = 0;
             this.canvasManager.canvas2d.a2.re = 0.25;
             this.canvasManager.canvas2d.a2.im = 0.;
             this.canvasManager.canvas2d.origin = new Complex(0, 0);
-            
-            this.valueChanged();
+
+            this.renderPreset();
         },
         changeToParam2: function(event) {
             this.canvasManager.canvas2d.a1.re = 0.49;
@@ -87,10 +91,9 @@ export default {
             this.canvasManager.canvas2d.a2.im = 0.41;
             this.canvasManager.canvas2d.origin = new Complex(0, 0);
             this.level = 40;
-            
-            this.valueChanged();            
+
+            this.renderPreset();
         }
     }
 }
 </script>
-    

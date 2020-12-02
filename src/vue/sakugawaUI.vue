@@ -81,6 +81,10 @@ export default {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToParam1: function(event) {
             this.canvasManager.canvas2d.z0.re = -1;
             this.canvasManager.canvas2d.z0.i = 0;
@@ -89,7 +93,7 @@ export default {
             this.canvasManager.canvas2d.thetaA = 0;
             this.canvasManager.canvas2d.thetaB = Math.PI * 0.5;
             
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToParam2: function(event) {
             this.canvasManager.canvas2d.z0.re = -2;
@@ -99,7 +103,7 @@ export default {
             this.canvasManager.canvas2d.thetaA = Math.PI * 0.5;
             this.canvasManager.canvas2d.thetaB = 0;
             
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToRotation: function(event) {
             this.canvasManager.canvas2d.z0.re = -2;
@@ -109,7 +113,7 @@ export default {
             this.canvasManager.canvas2d.thetaA = Math.PI * 0.5;
             this.canvasManager.canvas2d.thetaB = 0.3;
             
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToLine: function(event) {
             this.canvasManager.canvas2d.z0.re = -4;
@@ -119,7 +123,7 @@ export default {
             this.canvasManager.canvas2d.thetaA = 0;
             this.canvasManager.canvas2d.thetaB = 0;
             
-            this.valueChanged();
+            this.renderPreset();
         }
     }
 }

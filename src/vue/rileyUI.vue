@@ -51,20 +51,24 @@
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToDefault: function(event){
             this.canvasManager.canvas2d.c.re = 1.13;
             this.canvasManager.canvas2d.c.im = -0.43;
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToLine: function(event) {
             this.canvasManager.canvas2d.c.re = 2;
             this.canvasManager.canvas2d.c.im = 0;
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToFlow: function(event) {
             this.canvasManager.canvas2d.c.re = 1.3;
             this.canvasManager.canvas2d.c.im = 0.3;
-            this.valueChanged();
+            this.renderPreset();
         }
     }
   }

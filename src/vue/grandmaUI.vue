@@ -76,13 +76,17 @@ export default {
             this.canvasManager.canvas2d.preparePoints();
             this.canvasManager.canvas2d.render();
         },
+        renderPreset:function(event) {
+            this.canvasManager.canvas2d.preparePoints();
+            this.canvasManager.canvas2d.render();
+        },
         changeToDefault: function(event){
             this.canvasManager.canvas2d.t_a.re = 1.91;
             this.canvasManager.canvas2d.t_a.im = 0.05;
             this.canvasManager.canvas2d.t_b.re = 1.91;
             this.canvasManager.canvas2d.t_b.im = 0.05;
             this.canvasManager.canvas2d.isT_abPlus = true;
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToApollonius: function(event) {
             this.canvasManager.canvas2d.t_a.re = -2;
@@ -90,7 +94,7 @@ export default {
             this.canvasManager.canvas2d.t_b.re = -2;
             this.canvasManager.canvas2d.t_b.im = 0;
             this.canvasManager.canvas2d.isT_abPlus = true;
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToApollonianFlower: function(event) {
             this.canvasManager.canvas2d.t_a.re = 1.889;
@@ -99,7 +103,7 @@ export default {
             this.canvasManager.canvas2d.t_b.im = 0;
             this.canvasManager.canvas2d.isT_abPlus = false;
             this.canvasManager.canvas2d.maxLevel = 50;
-            this.valueChanged();
+            this.renderPreset();
         },
         changeToApollonianFlower2: function(event) {
             this.canvasManager.canvas2d.t_a.re = 1.90378;
@@ -108,7 +112,7 @@ export default {
             this.canvasManager.canvas2d.t_b.im = 0;
             this.canvasManager.canvas2d.isT_abPlus = false;
             this.canvasManager.canvas2d.maxLevel = 50;
-            this.valueChanged();
+            this.renderPreset();
         }
     }
 }
