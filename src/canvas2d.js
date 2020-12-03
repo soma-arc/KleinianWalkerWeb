@@ -14,6 +14,7 @@ import PointSeries from './pointSeries.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
+const RENDER_FLIPPED_VERT = require('./shaders/renderFlipped.vert');
 const SAKURA_POINTS = require('./sakura.csv');
 
 export default class Canvas2D extends Canvas {
@@ -206,6 +207,21 @@ export default class Canvas2D extends Canvas {
         this.vColorAttrib = this.gl.getAttribLocation(this.renderProgram,
                                                       'color');
         this.gl.enableVertexAttribArray(this.vColorAttrib);
+        
+        this.renderImageProgram = this.gl.createProgram();
+        AttachShader(this.gl, RENDER_FLIPPED_VERT,
+                     this.renderImageProgram, this.gl.VERTEX_SHADER);
+        AttachShader(this.gl, RENDER_FRAG,
+                     this.renderImageProgram, this.gl.FRAGMENT_SHADER);
+        LinkProgram(this.gl, this.renderImageProgram);
+        this.vPositionImageAttrib = this.gl.getAttribLocation(this.renderImageProgram,
+                                                         'vPosition');
+        this.gl.enableVertexAttribArray(this.vPositionImageAttrib);
+        this.vColorImageAttrib = this.gl.getAttribLocation(this.renderImageProgram,
+                                                      'color');
+        this.gl.enableVertexAttribArray(this.vColorImageAttrib);
+
+        
         this.getUniformLocations();
     }
 
@@ -293,13 +309,21 @@ export default class Canvas2D extends Canvas {
         const gl = this.gl;
         this.uniLocations = [];
         this.uniLocations.push(gl.getUniformLocation(this.renderProgram, 'u_mvpMatrix'));
+        this.uniLocationsImages = [];
+        this.uniLocationsImages.push(gl.getUniformLocation(this.renderImageProgram, 'u_mvpMatrix'));
     }
 
     setUniformValues() {
-        //console.log(this.functions);
         const gl = this.gl;
         let i = 0;
         gl.uniformMatrix4fv(this.uniLocations[i++],
+                            false, this.mvpM.m.elem);
+    }
+
+    setUniformValuesImages(){
+        const gl = this.gl;
+        let i = 0;
+        gl.uniformMatrix4fv(this.uniLocationsImages[i++],
                             false, this.mvpM.m.elem);
     }
     
@@ -525,6 +549,7 @@ export default class Canvas2D extends Canvas {
         this.mouseState.prevTranslate = this.translate;
         this.mouseState.isPressing = true;
         //console.log(`mouse${mouse.x}, ${mouse.y}`);
+        if(this.pointSeries === undefined) return;
         if(this.pointSeries.orbitSeedMin.x < mouse.x &&
            mouse.x <  this.pointSeries.orbitSeedMax.x &&
            this.pointSeries.orbitSeedMin.y < mouse.y &&
@@ -599,11 +624,128 @@ export default class Canvas2D extends Canvas {
         this.draggingOrbitSeed = false;
     }
 
-    save() {
-        this.render();
+    save() {            
+        this.renderImage();
         this.saveImage(this.gl,
                        this.canvas.width,
                        this.canvas.height,
                        'limitset.png');
+        this.render();
+    }
+
+    renderImage() {
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        const gl = this.gl;
+        gl.viewport(0, 0, width, height);
+        gl.clearColor(this.backgroundColor.rgba.r/255,
+                      this.backgroundColor.rgba.g/255,
+                      this.backgroundColor.rgba.b/255,
+                      this.backgroundColor.rgba.a);
+        gl.clearDepth(1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.useProgram(this.renderImageProgram);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pointsVbo);
+        const attStride = 3;
+        gl.vertexAttribPointer(this.vPositionImageAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.colorsVbo);
+        gl.vertexAttribPointer(this.vColorImageAttrib, attStride, this.gl.FLOAT, false, 0, 0);
+
+        let modelM = Transform.rotate(this.rotation, new Vec3(0, 1, 0));
+
+        let viewM;
+        let projectM;
+        if(this.recipeName === 'SakugawaRecipe') {
+            viewM = Transform.lookAt(new Point3(this.camera.pos.x,
+                                                this.camera.pos.y,
+                                                this.camera.pos.z),
+                                     new Point3(this.camera.target.x,
+                                                this.camera.target.y,
+                                                this.camera.target.z),
+                                     this.camera.up.scale(-1));
+            projectM = Transform.perspective(60, 0.001, 1000);
+        } else {
+            viewM = Transform.lookAt(new Point3(this.translate.x,
+                                                1, this.translate.y),
+                                     new Point3(this.translate.x,
+                                                0, this.translate.y),
+                                     new Vec3(0, 0, 1));
+            projectM = Transform.ortho2d(-width / this.scale,
+                                         width / this.scale,
+                                         height / this.scale,
+                                         -height / this.scale,
+                                         -1, 1);
+        }
+        
+        this.mvpM = projectM.mult(viewM).mult(modelM);
+        this.setUniformValuesImages();
+        const tmpOrbitM = modelM;
+        if(this.recipeName === 'OncePuncturedTorus') {
+            gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
+            gl.flush();
+
+            let tmpM = modelM;
+            for(let i = -8; i < 8; i++) {
+                if(i === 0) continue;
+                modelM = tmpM.mult(Transform.translate(i, 0, 0));
+                this.mvpM = projectM.mult(viewM).mult(modelM);
+                this.setUniformValuesImages();
+                gl.drawArrays(gl.LINE_STRIP, 0, this.points.length/3);
+            }
+            gl.flush();
+        } else {
+            gl.drawArrays(gl.LINES, 0, this.points.length/3);
+        }
+        gl.flush();
+
+        // Render otbit
+        if(this.showOrbit === false ||
+           this.recipeName === 'SakugawaRecipe') return;
+        this.orbitSeedColors = [];
+        for(const p of this.orbitPoints) {
+            this.orbitSeedColors.push(this.orbitColor.rgba.r/255,
+                                      this.orbitColor.rgba.g/255,
+                                      this.orbitColor.rgba.b/255);
+        }
+        //console.log(this.orbitColor);
+        this.orbitColorVbo = CreateStaticVbo(this.gl, this.orbitSeedColors);
+        for(const figure of this.transformedFigures) {
+            const orbitPoints = [];
+            for(const p of figure.points) {
+                orbitPoints.push(p.re, 0, p.im);
+            }
+            const orbitVbo = CreateStaticVbo(gl, orbitPoints);
+            
+            const tmpM = tmpOrbitM;
+            modelM = tmpM;
+            this.mvpM = projectM.mult(viewM).mult(modelM);
+            this.setUniformValuesImages();
+            gl.bindBuffer(this.gl.ARRAY_BUFFER, orbitVbo);
+            gl.vertexAttribPointer(this.vPositionImageAttrib, attStride,
+                                   this.gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
+            gl.vertexAttribPointer(this.vColorImageAttrib, attStride,
+                                   this.gl.FLOAT, false, 0, 0);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, orbitPoints.length/3);
+        }
+
+        if(this.showFrame === false) return;
+        const framePoints = [];
+        framePoints.push(this.pointSeries.orbitSeedMin.x, 0,
+                         this.pointSeries.orbitSeedMin.y);
+        framePoints.push(this.pointSeries.orbitSeedMin.x, 0,
+                         this.pointSeries.orbitSeedMax.y);
+        framePoints.push(this.pointSeries.orbitSeedMax.x, 0,
+                         this.pointSeries.orbitSeedMax.y);
+        framePoints.push(this.pointSeries.orbitSeedMax.x, 0,
+                         this.pointSeries.orbitSeedMin.y);
+        const frameVbo = CreateStaticVbo(gl, framePoints);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, frameVbo);
+        gl.vertexAttribPointer(this.vPositionImageAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(this.gl.ARRAY_BUFFER, this.orbitColorVbo);
+        gl.vertexAttribPointer(this.vColorImageAttrib, attStride,
+                               this.gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.LINE_LOOP, 0, framePoints.length/3);
     }
 }

@@ -8,6 +8,7 @@ out vec4 vColor;
 
 void main() {
   vColor = vec4(color, 1);
-  gl_Position = u_mvpMatrix * vec4(vPosition, 1.0);
+  vec3 p = vec3(vPosition.x, vPosition.y, vPosition.z * -1.0);
+  gl_Position = u_mvpMatrix * vec4(p, 1.0);
   gl_PointSize = 1.;
 }
