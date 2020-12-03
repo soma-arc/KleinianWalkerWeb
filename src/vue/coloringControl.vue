@@ -7,19 +7,19 @@
   </b-field>
   Limit Set Coloring Mode
   <b-field>
-    <b-radio v-model="canvasManager.canvas2d.coloringMode"
+    <b-radio v-model="coloringMode"
              name="name"
              native-value="Monotone" @input="changeLimitSetColor">
       Monotone
     </b-radio>
-    <b-radio v-model="canvasManager.canvas2d.coloringMode"
+    <b-radio v-model="coloringMode"
              name="name"
              native-value="Gradation"
              @input="changeLimitSetColor">
       Gradation
     </b-radio>
   </b-field>
-  <b-radio v-model="canvasManager.canvas2d.coloringMode"
+  <b-radio v-model="coloringMode"
            name="name"
            native-value="FirstGenerator"
            @input="changeLimitSetColor">
@@ -93,7 +93,8 @@ export default {
             },
             generatorColors3: {
                 rgba: { r: 255, g: 255, b: 0, a: 1 }
-            }
+            },
+            coloringMode: "Monotone"
         }
     },
     methods: {
@@ -102,6 +103,7 @@ export default {
             this.canvasManager.canvas2d.render();
         },
         changeLimitSetColor: function(event) {
+            this.canvasManager.canvas2d.coloringMode = this.coloringMode;
             this.canvasManager.canvas2d.limitSetColor = this.limitSetColors;
             this.canvasManager.canvas2d.changeLimitSetColor();
             this.canvasManager.canvas2d.render();

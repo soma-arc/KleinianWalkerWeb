@@ -14,10 +14,7 @@ import PointSeries from './pointSeries.js';
 
 const RENDER_FRAG = require('./shaders/render.frag');
 const RENDER_VERT = require('./shaders/render.vert');
-//const ORBIT_SEED = require('./momizi.csv');
-//const ORBIT_SEED = require('./sakura.csv');
-//const ORBIT_SEED = require('./snowFlake.csv');
-const ORBIT_SEED = require('./butterfly.csv');
+const SAKURA_POINTS = require('./sakura.csv');
 
 export default class Canvas2D extends Canvas {
     constructor(canvasId, scene2d) {
@@ -93,6 +90,8 @@ export default class Canvas2D extends Canvas {
 
         this.recipeName = 'GrandmaRecipe';
 
+        this.orbitScale = 0.007;
+        this.orbitPoints = SAKURA_POINTS;
         this.orbitTranslation = new Vec2(0.5, 0);
         //this.orbitTranslation = new Vec2(0.0, 0);
         this.showOrbit = false;
@@ -101,7 +100,7 @@ export default class Canvas2D extends Canvas {
         this.pointSeriesMaxLevel = 5;
         this.showFrame = false;
         this.orbitColor = {
-            rgba: { r:255, g: 161, b: 3, a: 1 }
+            rgba: { r:248, g: 144, b: 231, a: 1 }
         };
     }
 
@@ -135,10 +134,8 @@ export default class Canvas2D extends Canvas {
     }
 
     computeOrbits() {
-        //this.orbitScale = 0.009;
-        this.orbitScale = 0.007;
         const points = [];
-        for(const p of ORBIT_SEED) {
+        for(const p of this.orbitPoints) {
             const x = p[0] * this.orbitScale + this.orbitTranslation.x;
             const y = p[1] * this.orbitScale + this.orbitTranslation.y;
             points.push(new Complex(x, y));
@@ -394,7 +391,7 @@ export default class Canvas2D extends Canvas {
         if(this.showOrbit === false ||
            this.recipeName === 'SakugawaRecipe') return;
         this.orbitSeedColors = [];
-        for(const p of ORBIT_SEED) {
+        for(const p of this.orbitPoints) {
             this.orbitSeedColors.push(this.orbitColor.rgba.r/255,
                                       this.orbitColor.rgba.g/255,
                                       this.orbitColor.rgba.b/255);
