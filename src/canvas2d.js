@@ -555,8 +555,9 @@ export default class Canvas2D extends Canvas {
            this.pointSeries.orbitSeedMin.y < mouse.y &&
            mouse.y <  this.pointSeries.orbitSeedMax.y) {
             //console.log('click');
-            this.orbitMouseDiff = new Vec2(mouse.x - this.pointSeries.orbitSeedMin.x - this.orbitTranslation.x,
-                                           mouse.y - this.pointSeries.orbitSeedMin.y - this.orbitTranslation.y);
+            this.diffFrameMouse = mouse.sub(this.pointSeries.orbitSeedMin);
+            this.orbitMouseDiff = new Vec2(mouse.x,// - this.pointSeries.orbitSeedMin.x - this.orbitTranslation.x,
+                                           mouse.y);// - this.pointSeries.orbitSeedMin.y - this.orbitTranslation.y);
             //console.log(`diff ${this.orbitMouseDiff.x}, ${this.orbitMouseDiff.y}`);
             this.prevOrbitTranslation = this.orbitTranslation;
             this.draggingOrbitSeed = true;
@@ -610,7 +611,8 @@ export default class Canvas2D extends Canvas {
             const mouse = this.calcCanvasCoord(event.clientX, event.clientY);
             const wh = new Vec2(this.pointSeries.orbitWidth,
                                 this.pointSeries.orbitHeight).scale(0.5);
-            this.orbitTranslation = mouse.add(wh);
+            this.orbitTranslation = mouse.add(wh).sub(this.diffFrameMouse);
+            //this.orbitTranslation = mouse.sub(this.orbitMouseDiff);
             //console.log(`orb ${this.orbitTranslation.x}, ${this.orbitTranslation.y}`);
             this.computeOrbits();
             this.render();

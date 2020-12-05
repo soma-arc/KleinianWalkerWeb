@@ -37,7 +37,16 @@
                @input="changeOrbit">
         Snowflake
       </b-radio>
+      <b-radio v-model="orbitType"
+               name="name"
+               native-value="others"
+               @input="changeLoaded">
+        Others
+      </b-radio>
     </div>
+    <b-field v-show="orbitType === 'others'">
+      <b-button @click="loadPoints">Load points</b-button>
+    </b-field>
     <b-field>
     Orbit Scale
     <b-input v-model.number="canvasManager.canvas2d.orbitScale"
@@ -74,7 +83,8 @@ export default {
     props: ['canvasManager'],
     data: function () {
         return {
-            orbitType: "sakura"
+            orbitType: "sakura",
+            loadedPoints: []
         }
     },
     methods: {
@@ -96,6 +106,34 @@ export default {
                 this.canvasManager.canvas2d.orbitPoints = SNOW_POINTS;
             }
 
+            this.canvasManager.canvas2d.computeOrbits();
+            this.canvasManager.canvas2d.render();
+        },
+        loadPoints: function (event) {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+                const result = [];
+                const tmp = reader.result.split("\n");
+ 
+                for(let i = 0; i < tmp.length; i++){
+                    result[i] = tmp[i].split(',');
+                }
+                this.canvasManager.canvas2d.orbitPoints = result;
+                this.loadedPoints = result;
+                this.canvasManager.canvas2d.computeOrbits();
+                this.canvasManager.canvas2d.render();
+            });
+            const a = document.createElement('input');
+            a.type = 'file';
+            a.addEventListener('change', function(event) {
+                const files = event.target.files;
+                if(files[0].name.includes(".csv") === false) return;
+                reader.readAsText(files[0]);
+            });
+            a.click();
+        },
+        changeLoaded: function(event) {
+            this.canvasManager.canvas2d.orbitPoints = this.loadedPoints;
             this.canvasManager.canvas2d.computeOrbits();
             this.canvasManager.canvas2d.render();
         }
